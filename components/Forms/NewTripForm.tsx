@@ -57,7 +57,7 @@ const NewTripForm: NextPage<Props> = ({}) => {
               border border-gray-300 placeholder-gray-500 mb-4
               focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 
               sm:text-sm sm:leading-5"
-              placeholder="Nickname"
+              placeholder="Our Hawaii Honeymoon"
               onChange={e => setNickname(e.target.value)}
             />
           </div>
