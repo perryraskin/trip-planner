@@ -1,3 +1,5 @@
 # Prisma Migrate lockfile v1
 
 20200830225714-create-users
+20201020015857-trips
+20201020021258-trips-fix

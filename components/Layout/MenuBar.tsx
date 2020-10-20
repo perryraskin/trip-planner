@@ -4,6 +4,8 @@ import { useContext, useState, useEffect, useRef } from "react"
 import { NextPage } from "next"
 import Link from "next/link"
 
+import Button from "../Elements/Button"
+
 interface Props {}
 
 const MenuBar: NextPage<Props> = ({}) => {
@@ -47,11 +49,20 @@ const MenuBar: NextPage<Props> = ({}) => {
         </div>
         <div className="text-xl text-white font-bold tracking-tight ml-2">
           <Link href={`/`}>
-            <a>Next.js TailwindCSS Starter</a>
+            <a>Tripnotize</a>
           </Link>
         </div>
       </div>
       <div className="flex items-center">
+        <Link href={`/trip/new`}>
+          <a>
+            <Button
+              text="New Trip"
+              extend="bg-blue-600 text-white uppercase tracking-wider border-2 border-white
+          hover:bg-blue-500"
+            />
+          </a>
+        </Link>
         <a
           href="#"
           className="text-white p-2 rounded-full 
