@@ -6,6 +6,7 @@ import { useQuery, useMutation, queryCache } from "react-query"
 import withLayout from "../../hocs/withLayout"
 import utilities from "../../utilities"
 
+import Section from "../Layout/Section"
 import Button from "../Elements/Button"
 
 interface Props {}
@@ -20,8 +21,8 @@ async function fetchUsersRequest() {
 const Home: NextPage<Props> = ({}) => {
   const { data: users } = useQuery("users", fetchUsersRequest)
   return (
-    <div className="text-center">
-      <h1>Next.js TailwindCSS Starter</h1>
+    <Section extend="mb-20">
+      <h1>My Trips</h1>
       <p>A super simple boilerplate for your Next.js web app</p>
       <a
         href="https://github.com/perryraskin/nextjs-tailwindcss-starter"
@@ -36,7 +37,7 @@ const Home: NextPage<Props> = ({}) => {
         {users ? users[0].name : ""}'s email is {users ? users[0].email : ""}
       </p>
       <p>{JSON.stringify(users)}</p>
-    </div>
+    </Section>
   )
 }
 

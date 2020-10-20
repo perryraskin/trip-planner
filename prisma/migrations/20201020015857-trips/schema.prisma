@@ -3,7 +3,7 @@
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 generator client {
@@ -21,6 +21,6 @@ model Trips {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   nickname  String
-  dateStart DateTime
-  dateEnd   DateTime
+  startDate DateTime
+  endDate   DateTime
 }
