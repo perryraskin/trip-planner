@@ -1,6 +1,6 @@
 import React from "react"
 import { NextPage } from "next"
-import Router from "next/router"
+import { Router, useRouter } from "next/router"
 import { useQuery, useMutation, queryCache } from "react-query"
 
 import withLayout from "../../hocs/withLayout"
@@ -13,31 +13,29 @@ import dayjs from "dayjs"
 
 interface Props {}
 
-async function sendTripData(tripData) {
-  const res = await fetch("/api/trips/create", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(tripData)
-  })
-  const data = await res.json()
-  const { trip } = data
-  console.log(trip)
-  return trip
-}
-
-function useCreateTrip() {
-  return useMutation(sendTripData)
-}
-
 const NewTripForm: NextPage<Props> = ({}) => {
+  const router = useRouter()
   const now = dayjs()
   const [nickname, setNickname] = React.useState("")
   const [dateStart, setDateStart] = React.useState(now.format("YYYY-MM-DD"))
   const [dateEnd, setDateEnd] = React.useState(
     now.add(1, "day").format("YYYY-MM-DD")
   )
+
+  async function sendTripData(e, tripData) {
+    e.preventDefault()
+    const res = await fetch("/api/trips/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(tripData)
+    })
+    res.json().then(res => {
+      console.log(res)
+      router.push("/")
+    })
+  }
   return (
     <Section extend="mb-20 w-full py-12 px-4">
       <div>
@@ -98,8 +96,8 @@ const NewTripForm: NextPage<Props> = ({}) => {
             rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none 
             focus:border-blue-700 focus:shadow-outline-indigo active:bg-indigo-700 
             transition duration-150 ease-in-out text-lg md:text-base"
-            onClick={() =>
-              sendTripData({
+            onClick={e =>
+              sendTripData(e, {
                 trip: {
                   nickname,
                   dateStart,
