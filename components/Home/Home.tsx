@@ -28,7 +28,6 @@ async function fetchTripsRequest() {
 
 const Home: NextPage<Props> = ({}) => {
   const { data: trips } = useQuery("trips", fetchTripsRequest)
-  console.log(trips)
   return (
     <Section extend="mb-20">
       <h1>My Trips</h1>
@@ -98,7 +97,7 @@ const Home: NextPage<Props> = ({}) => {
                             <td className="px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
                               <a
                                 href="/"
-                                className="text-indigo-600 hover:text-indigo-900"
+                                className="text-blue-600 hover:text-blue-900"
                               >
                                 Edit
                               </a>
