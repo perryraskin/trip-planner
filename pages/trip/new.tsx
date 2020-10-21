@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from "react"
 import { NextPage } from "next"
-import NewTripForm from "../../components/Forms/NewTripForm"
+import TripForm from "../../components/Forms/TripForm"
 
 interface Props {}
 
 const NewTrip: NextPage<Props> = ({}) => {
-  return <NewTripForm />
+  return <TripForm />
 }
 
 export default NewTrip

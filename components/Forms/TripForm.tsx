@@ -2,6 +2,7 @@ import React from "react"
 import { NextPage } from "next"
 import { Router, useRouter } from "next/router"
 import { useQuery, useMutation, queryCache } from "react-query"
+import dayjs from "dayjs"
 
 import withLayout from "../../hocs/withLayout"
 import utilities from "../../utilities"
@@ -9,13 +10,25 @@ import utilities from "../../utilities"
 import Section from "../Layout/Section"
 import Button from "../Elements/Button"
 
-import dayjs from "dayjs"
+import { Trip } from "../../components/Home/Home"
 
 interface Props {}
 
-const NewTripForm: NextPage<Props> = ({}) => {
+async function fetchTripRequest() {
+  if (!window.location.pathname.includes("new")) {
+    const tripId = window.location.pathname.replace(/[^\d.]/g, "")
+    const res = await fetch(`/api/trip/${tripId}`)
+    const data = await res.json()
+    const { trip } = data
+    return trip
+  }
+}
+
+const TripForm: NextPage<Props> = ({}) => {
   const router = useRouter()
   const now = dayjs()
+  const { data: trip } = useQuery("trip", fetchTripRequest)
+  const currentTrip: Trip = trip
   const [nickname, setNickname] = React.useState("")
   const [dateStart, setDateStart] = React.useState(now.format("YYYY-MM-DD"))
   const [dateEnd, setDateEnd] = React.useState(
@@ -24,22 +37,29 @@ const NewTripForm: NextPage<Props> = ({}) => {
 
   async function sendTripData(e, tripData) {
     e.preventDefault()
-    const res = await fetch("/api/trips/create", {
+    let apiUrl = "/api/trips/create"
+    if (trip) apiUrl = `/api/trip/${trip.id}/update`
+    const res = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(tripData)
     })
-    res.json().then(res => {
+    if (res) {
       console.log(res)
-      router.push("/")
-    })
+      res.json().then(res => {
+        console.log(res)
+        router.push("/")
+      })
+    }
   }
   return (
-    <Section extend="mb-20 w-full py-12 px-4">
+    <Section>
       <div>
-        <h2 className="mt-6 text-3xl leading-9 font-extrabold">New Trip</h2>
+        <h2 className="mt-6 text-3xl leading-9 font-extrabold">
+          {currentTrip ? "Edit" : "New"} Trip
+        </h2>
       </div>
       <form className="mt-8">
         <input type="hidden" name="remember" value="true" />
@@ -57,6 +77,7 @@ const NewTripForm: NextPage<Props> = ({}) => {
               sm:text-sm sm:leading-5"
               placeholder="Our Hawaii Honeymoon"
               onChange={e => setNickname(e.target.value)}
+              defaultValue={trip ? trip.nickname : ""}
             />
           </div>
           <div className="-mt-px">
@@ -69,7 +90,11 @@ const NewTripForm: NextPage<Props> = ({}) => {
               className="appearance-none rounded relative block w-full px-3 py-2 
               border border-gray-300 placeholder-gray-500 mb-4 focus:outline-none 
               focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5"
-              defaultValue={now.format("YYYY-MM-DD")}
+              defaultValue={
+                trip
+                  ? dayjs(trip.dateStart).format("YYYY-MM-DD")
+                  : now.format("YYYY-MM-DD")
+              }
               onChange={e => setDateStart(e.target.value)}
             />
           </div>
@@ -83,7 +108,11 @@ const NewTripForm: NextPage<Props> = ({}) => {
               className="appearance-none rounded relative block w-full px-3 py-2 
               border border-gray-300 placeholder-gray-500 focus:outline-none focus:shadow-outline-blue 
               focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5"
-              defaultValue={now.add(1, "day").format("YYYY-MM-DD")}
+              defaultValue={
+                trip
+                  ? dayjs(trip.dateEnd).format("YYYY-MM-DD")
+                  : now.add(1, "day").format("YYYY-MM-DD")
+              }
               onChange={e => setDateEnd(e.target.value)}
             />
           </div>
@@ -114,4 +143,4 @@ const NewTripForm: NextPage<Props> = ({}) => {
   )
 }
 
-export default withLayout(NewTripForm)
+export default withLayout(TripForm)

@@ -1,5 +1,6 @@
 import React from "react"
 import { NextPage } from "next"
+import Link from "next/link"
 import Router from "next/router"
 import { useQuery, useMutation, queryCache } from "react-query"
 import dayjs from "dayjs"
@@ -10,7 +11,7 @@ import utilities from "../../utilities"
 import Section from "../Layout/Section"
 import Button from "../Elements/Button"
 
-interface Trip {
+export interface Trip {
   id: number
   nickname: string
   dateStart: Date
@@ -29,9 +30,11 @@ async function fetchTripsRequest() {
 const Home: NextPage<Props> = ({}) => {
   const { data: trips } = useQuery("trips", fetchTripsRequest)
   return (
-    <Section extend="mb-20">
-      <h1>My Trips</h1>
-      <div className="flex flex-col">
+    <Section>
+      <div>
+        <h2 className="mt-6 text-3xl leading-9 font-extrabold">My Trips</h2>
+      </div>
+      <div className="flex flex-col mt-8">
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -57,7 +60,7 @@ const Home: NextPage<Props> = ({}) => {
                   {trips
                     ? trips.map((trip: Trip) => {
                         return (
-                          <tr key={trip.id}>
+                          <tr key={trip.id} className="hover:bg-blue-100">
                             <td className="px-6 py-4 whitespace-no-wrap">
                               <div className="flex items-center">
                                 {/* <div className="flex-shrink-0 h-10 w-10">
@@ -69,7 +72,9 @@ const Home: NextPage<Props> = ({}) => {
                           </div> */}
                                 <div className="ml-4">
                                   <div className="text-sm leading-5 font-medium text-gray-900">
-                                    {trip.nickname}
+                                    <Link href={`/trip/${trip.id}`}>
+                                      {trip.nickname}
+                                    </Link>
                                   </div>
                                   {/* <div className="text-sm leading-5 text-gray-500">
                               jane.cooper@example.com
@@ -95,12 +100,11 @@ const Home: NextPage<Props> = ({}) => {
                         Admin
                       </td> */}
                             <td className="px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
-                              <a
-                                href="/"
-                                className="text-blue-600 hover:text-blue-900"
-                              >
-                                Edit
-                              </a>
+                              <Link href={`/trip/${trip.id}/edit`}>
+                                <a className="text-blue-600 hover:text-blue-900">
+                                  Edit
+                                </a>
+                              </Link>
                             </td>
                           </tr>
                         )
