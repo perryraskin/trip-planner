@@ -3,14 +3,15 @@ import { NextPage } from "next"
 import Link from "next/link"
 import { Router, useRouter } from "next/router"
 import { useQuery, useMutation, queryCache } from "react-query"
+import dayjs from "dayjs"
+import utc from "dayjs/plugin/utc"
+dayjs.extend(utc)
 
 import withLayout from "../../hocs/withLayout"
 import utilities from "../../utilities"
 
 import Section from "../Layout/Section"
 import Button from "../Elements/Button"
-
-import dayjs from "dayjs"
 
 import { Trip } from "../Home/Home"
 
@@ -63,8 +64,8 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
                   clipRule="evenodd"
                 />
               </svg>
-              {dayjs(trip.dateStart).format("MM/DD/YYYY")} to{" "}
-              {dayjs(trip.dateEnd).format("MM/DD/YYYY")}
+              {dayjs.utc(trip.dateStart).format("MM/DD/YYYY")} to{" "}
+              {dayjs.utc(trip.dateEnd).format("MM/DD/YYYY")}
             </div>
           </div>
         </div>
@@ -91,6 +92,30 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
                 Edit
               </a>
             </Link>
+          </span>
+          <span className="sm:ml-3 shadow-sm rounded-md">
+            <button
+              type="button"
+              className="inline-flex items-center px-4 py-2 border border-transparent 
+              text-sm leading-5 font-medium rounded-md text-white 
+              bg-blue-600 hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue 
+              focus:border-blue-700 active:bg-blue-700 transition duration-150 ease-in-out"
+            >
+              <svg
+                className="-ml-1 mr-2 h-5 w-5"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="3"
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                ></path>
+              </svg>
+              TripNote
+            </button>
           </span>
         </div>
       </div>

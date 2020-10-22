@@ -4,6 +4,8 @@ import Link from "next/link"
 import Router from "next/router"
 import { useQuery, useMutation, queryCache } from "react-query"
 import dayjs from "dayjs"
+import utc from "dayjs/plugin/utc"
+dayjs.extend(utc)
 
 import withLayout from "../../hocs/withLayout"
 import utilities from "../../utilities"
@@ -28,7 +30,32 @@ async function fetchTripsRequest() {
 }
 
 const Home: NextPage<Props> = ({}) => {
-  const { data: trips } = useQuery("trips", fetchTripsRequest)
+  const { data: trips, error, isFetching } = useQuery(
+    "trips",
+    fetchTripsRequest
+  )
+
+  const [mutateDeleteTrip] = useMutation(
+    (tripId: number) =>
+      fetch(`/api/trip/${tripId}/delete`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }),
+    {
+      onSuccess: () => {
+        queryCache.invalidateQueries("trips")
+      }
+    }
+  )
+
+  function confirmDelete(tripId: number) {
+    const choseToDelete = window.confirm("Delete trip?")
+    if (choseToDelete) {
+      mutateDeleteTrip(tripId)
+    }
+  }
   return (
     <Section>
       <div>
@@ -84,7 +111,7 @@ const Home: NextPage<Props> = ({}) => {
                             </td>
                             <td className="px-6 py-4 whitespace-no-wrap">
                               <div className="text-sm leading-5 text-gray-900">
-                                {dayjs(trip.dateStart).format("MM/DD/YYYY")}
+                                {dayjs.utc(trip.dateStart).format("MM/DD/YYYY")}
                               </div>
                               {/* <div className="text-sm leading-5 text-gray-500">
                           Optimization
@@ -94,17 +121,27 @@ const Home: NextPage<Props> = ({}) => {
                               {/* <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                               Active
                             </span> */}
-                              {dayjs(trip.dateEnd).format("MM/DD/YYYY")}
+                              {dayjs.utc(trip.dateEnd).format("MM/DD/YYYY")}
                             </td>
                             {/* <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
                         Admin
                       </td> */}
-                            <td className="px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
+                            <td
+                              className="px-6 py-4 whitespace-no-wrap text-right 
+                            text-sm leading-5 font-medium"
+                            >
                               <Link href={`/trip/${trip.id}/edit`}>
-                                <a className="text-blue-600 hover:text-blue-900">
+                                <a className="text-blue-600 hover:text-blue-900 mr-4">
                                   Edit
                                 </a>
                               </Link>
+                              <a
+                                href="#"
+                                className="text-red-600 hover:text-red-900"
+                                onClick={() => confirmDelete(trip.id)}
+                              >
+                                Delete
+                              </a>
                             </td>
                           </tr>
                         )
