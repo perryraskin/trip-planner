@@ -12,7 +12,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { trip } = req.body
     console.log(req.body)
-    const deletedTrip = await prisma.trips.delete({
+    const deletedTrip = await prisma.trip.delete({
       where: { id: parseInt(tripIdInt) }
     })
 

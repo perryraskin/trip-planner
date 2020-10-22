@@ -12,7 +12,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { trip } = req.body
     console.log(req.body)
-    const existingTrip = await prisma.trips.update({
+    const existingTrip = await prisma.trip.update({
       where: { id: parseInt(tripIdInt) },
       data: {
         nickname: trip.nickname,

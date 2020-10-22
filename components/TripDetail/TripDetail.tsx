@@ -114,7 +114,7 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
                   d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                 ></path>
               </svg>
-              TripNote
+              Trip Note
             </button>
           </span>
         </div>

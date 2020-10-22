@@ -7,8 +7,13 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { trip } = req.body
     console.log(req.body)
-    const newTrip = await prisma.trips.create({
+    const newTrip = await prisma.trip.create({
       data: {
+        User: {
+          connect: {
+            id: 1
+          }
+        },
         nickname: trip.nickname,
         dateStart: new Date(trip.dateStart),
         dateEnd: new Date(trip.dateEnd)
@@ -20,6 +25,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
   } catch (err) {
     res.status(500)
     res.json({ error: err.message })
+    console.log(err.message)
   } finally {
     await prisma.$disconnect()
   }
