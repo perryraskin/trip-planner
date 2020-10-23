@@ -13,17 +13,23 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
     const trip = await prisma.trip.findOne({
       where: {
         id: parseInt(tripIdInt)
-      }
-    })
-
-    const tripNotes = await prisma.tripNote.findMany({
-      where: {
-        tripId: trip.id
+      },
+      include: {
+        TripNotes: {
+          include: {
+            TripNoteCosts: true,
+            TripNoteItems: {
+              include: {
+                TripNoteItemImages: true
+              }
+            }
+          }
+        }
       }
     })
 
     res.status(200)
-    res.json({ trip, tripNotes })
+    res.json({ trip })
   } catch (err) {
     res.status(500)
     res.json({ error: err.message })

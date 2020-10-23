@@ -196,8 +196,8 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {trip.tripNotes
-                    ? trip.tripNotes.map((tripNote: TripNote) => {
+                  {trip.TripNotes
+                    ? trip.TripNotes.map((tripNote: TripNote) => {
                         return (
                           <tr key={trip.id} className="hover:bg-blue-100">
                             <td className="px-6 py-4 whitespace-no-wrap">
@@ -216,24 +216,25 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
                                     </Link>
                                   </div>
                                   <div className="text-sm leading-5 text-gray-500">
-                              {tripNote.subtitle}
-                            </div>
+                                    {tripNote.subtitle}
+                                  </div>
                                 </div>
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-no-wrap">
                               <div className="text-sm leading-5 text-gray-900">
-                                
                                 <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                {tripNote.tripNoteType === TripNoteType.Lodging ? "Lodging" : ""}
-                            </span>
+                                  {tripNote.tripNoteType ===
+                                  TripNoteType.Lodging
+                                    ? "Lodging"
+                                    : ""}
+                                </span>
                               </div>
                               {/* <div className="text-sm leading-5 text-gray-500">
                           Optimization
                         </div> */}
                             </td>
                             <td className="text-sm px-6 py-4 whitespace-no-wrap">
-                              
                               ${0}
                             </td>
                             {/* <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">

@@ -8,13 +8,10 @@ import { Trip, TripNote } from "../../components/Home/Home"
 
 interface Props {
   trip?: Trip
-  tripNotes?: Array<TripNote>
   errors?: any
 }
 
-const TripDetailPage: NextPage<Props> = ({ trip, tripNotes, errors }) => {
-  let tripObject = trip
-  tripObject.tripNotes = tripNotes
+const TripDetailPage: NextPage<Props> = ({ trip, errors }) => {
   return <TripDetail trip={trip} />
 }
 
@@ -29,14 +26,13 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   //console.log('sessionId:', sessionId);
   const res = await fetch(apiUrl)
   const resData = await res.json()
-  const { trip, tripNotes } = resData
-  //console.log('res:', trip);
+  const { trip } = resData
+  //console.log("res:", trip)
 
   if (trip) {
     return {
       props: {
-        trip,
-        tripNotes
+        trip
       }
     }
   } else {

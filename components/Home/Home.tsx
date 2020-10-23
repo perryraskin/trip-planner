@@ -159,7 +159,7 @@ export interface Trip {
   dateEnd: Date
   headerImageUrl: string
   userId: number
-  tripNotes: Array<TripNote>
+  TripNotes: Array<TripNote>
 }
 
 export interface TripNote {
@@ -170,7 +170,7 @@ export interface TripNote {
   tag: string
   userId: number
   tripId: number
-  tripNoteItems: Array<TripNoteItem>
+  TripNoteItems: Array<TripNoteItem>
 }
 
 export enum TripNoteType {
@@ -185,10 +185,10 @@ export interface TripNoteItem {
   subtitle: string
   details: string
   tripNoteId: number
-  tripNoteImages: Array<TripNoteImage>
+  TripNoteImages: Array<TripNoteItemImage>
 }
 
-export interface TripNoteImage {
+export interface TripNoteItemImage {
   id: number
   name: string
   sourceUrl: string
