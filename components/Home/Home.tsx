@@ -13,13 +13,6 @@ import utilities from "../../utilities"
 import Section from "../Layout/Section"
 import Button from "../Elements/Button"
 
-export interface Trip {
-  id: number
-  nickname: string
-  dateStart: Date
-  dateEnd: Date
-}
-
 interface Props {}
 
 async function fetchTripsRequest() {
@@ -158,3 +151,46 @@ const Home: NextPage<Props> = ({}) => {
 }
 
 export default withLayout(Home)
+
+export interface Trip {
+  id: number
+  nickname: string
+  dateStart: Date
+  dateEnd: Date
+  headerImageUrl: string
+  userId: number
+  tripNotes: Array<TripNote>
+}
+
+export interface TripNote {
+  id: number
+  title: string
+  subtitle: string
+  tripNoteType: TripNoteType
+  tag: string
+  userId: number
+  tripId: number
+  tripNoteItems: Array<TripNoteItem>
+}
+
+export enum TripNoteType {
+  Lodging = 1,
+  Transit = 2,
+  Excursion = 3
+}
+
+export interface TripNoteItem {
+  id: number
+  title: string
+  subtitle: string
+  details: string
+  tripNoteId: number
+  tripNoteImages: Array<TripNoteImage>
+}
+
+export interface TripNoteImage {
+  id: number
+  name: string
+  sourceUrl: string
+  tripNoteItemId: number
+}

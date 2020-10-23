@@ -13,10 +13,17 @@ import utilities from "../../utilities"
 import Section from "../Layout/Section"
 import Button from "../Elements/Button"
 
-import { Trip } from "../Home/Home"
+import { Trip, TripNote, TripNoteType } from "../Home/Home"
 
 interface Props {
   trip: Trip
+}
+
+async function fetchTripNotesRequest() {
+  const res = await fetch("/api/tripnotes")
+  const data = await res.json()
+  const { trips } = data
+  return trips
 }
 
 const TripDetail: NextPage<Props> = ({ trip }) => {
@@ -28,27 +35,19 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
     now.add(1, "day").format("YYYY-MM-DD")
   )
 
-  async function sendTripData(e, tripData) {
-    e.preventDefault()
-    const res = await fetch("/api/trips/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(tripData)
-    })
-    res.json().then(res => {
-      console.log(res)
-      router.push("/")
-    })
-  }
+  // const { data: tripnotes, error, isFetching } = useQuery(
+  //   "trips",
+  //   fetchTripNotesRequest
+  // )
   return (
     <Section extend="mb-20 w-full py-12 px-4">
       <div className="lg:flex lg:items-center lg:justify-between">
         <div className="flex-1 min-w-0">
-          <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate">
-            {trip.nickname}
-          </h2>
+          <div>
+            <h2 className="mt-6 text-3xl leading-9 font-extrabold">
+              {trip.nickname}
+            </h2>
+          </div>
           <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap">
             <div className="mt-2 flex items-center text-sm leading-5 text-gray-500">
               {/* Heroicon name: calendar */}
@@ -93,30 +92,178 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
               </a>
             </Link>
           </span>
-          <span className="sm:ml-3 shadow-sm rounded-md">
-            <button
-              type="button"
-              className="inline-flex items-center px-4 py-2 border border-transparent 
+        </div>
+      </div>
+      <div className="mt-6 flex">
+        <span className="sm:ml-3 shadow-sm rounded-md">
+          <button
+            type="button"
+            className="inline-flex items-center px-4 py-2 border border-transparent 
               text-sm leading-5 font-medium rounded-md text-white 
               bg-blue-600 hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue 
               focus:border-blue-700 active:bg-blue-700 transition duration-150 ease-in-out"
+          >
+            <svg
+              className="-ml-1 mr-2 h-5 w-5"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <svg
-                className="-ml-1 mr-2 h-5 w-5"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="3"
-                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                ></path>
-              </svg>
-              Trip Note
-            </button>
-          </span>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="3"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              ></path>
+            </svg>
+            Lodging
+          </button>
+        </span>
+        <span className="sm:ml-3 shadow-sm rounded-md">
+          <button
+            type="button"
+            className="inline-flex items-center px-4 py-2 border border-transparent 
+              text-sm leading-5 font-medium rounded-md text-white 
+              bg-blue-600 hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue 
+              focus:border-blue-700 active:bg-blue-700 transition duration-150 ease-in-out"
+          >
+            <svg
+              className="-ml-1 mr-2 h-5 w-5"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="3"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              ></path>
+            </svg>
+            Transit
+          </button>
+        </span>
+        <span className="sm:ml-3 shadow-sm rounded-md">
+          <button
+            type="button"
+            className="inline-flex items-center px-4 py-2 border border-transparent 
+              text-sm leading-5 font-medium rounded-md text-white 
+              bg-blue-600 hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue 
+              focus:border-blue-700 active:bg-blue-700 transition duration-150 ease-in-out"
+          >
+            <svg
+              className="-ml-1 mr-2 h-5 w-5"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="3"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              ></path>
+            </svg>
+            Excursion
+          </button>
+        </span>
+      </div>
+
+      {/* TRIP NOTES */}
+      <div>
+        <h2 className="mt-6 text-xl leading-9 font-extrabold">Trip Notes</h2>
+      </div>
+      <div className="flex flex-col mt-8">
+        <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead>
+                  <tr>
+                    <th className="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th className="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                      Type
+                    </th>
+                    <th className="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                      Cost
+                    </th>
+                    {/* <th className="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                      Role
+                    </th> */}
+                    <th className="px-6 py-3 bg-gray-50"></th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {trip.tripNotes
+                    ? trip.tripNotes.map((tripNote: TripNote) => {
+                        return (
+                          <tr key={trip.id} className="hover:bg-blue-100">
+                            <td className="px-6 py-4 whitespace-no-wrap">
+                              <div className="flex items-center">
+                                {/* <div className="flex-shrink-0 h-10 w-10">
+                            <img
+                              className="h-10 w-10 rounded-full"
+                              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=4&amp;w=256&amp;h=256&amp;q=60"
+                              alt=""
+                            />
+                          </div> */}
+                                <div className="ml-4">
+                                  <div className="text-sm leading-5 font-medium text-gray-900">
+                                    <Link href={`/tripnote/${tripNote.id}`}>
+                                      {tripNote.title}
+                                    </Link>
+                                  </div>
+                                  <div className="text-sm leading-5 text-gray-500">
+                              {tripNote.subtitle}
+                            </div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-no-wrap">
+                              <div className="text-sm leading-5 text-gray-900">
+                                
+                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                {tripNote.tripNoteType === TripNoteType.Lodging ? "Lodging" : ""}
+                            </span>
+                              </div>
+                              {/* <div className="text-sm leading-5 text-gray-500">
+                          Optimization
+                        </div> */}
+                            </td>
+                            <td className="text-sm px-6 py-4 whitespace-no-wrap">
+                              
+                              ${0}
+                            </td>
+                            {/* <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
+                        Admin
+                      </td> */}
+                            <td
+                              className="px-6 py-4 whitespace-no-wrap text-right 
+                            text-sm leading-5 font-medium"
+                            >
+                              <Link href={`/tripnote/${tripNote.id}/edit`}>
+                                <a className="text-blue-600 hover:text-blue-900 mr-4">
+                                  Edit
+                                </a>
+                              </Link>
+                              <a
+                                href="#"
+                                className="text-red-600 hover:text-red-900"
+                                //onClick={() => confirmDelete(trip.id)}
+                              >
+                                Delete
+                              </a>
+                            </td>
+                          </tr>
+                        )
+                      })
+                    : null}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </Section>
