@@ -3,30 +3,31 @@ import { PrismaClient } from "@prisma/client"
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
   const prisma = new PrismaClient({ log: ["query"] })
+  const {
+    query: { id }
+  } = req
 
+  const tripNoteId = id as unknown
+  const tripNoteIdInt = tripNoteId as string
   try {
-    const { trip } = req.body
-    const { nickname, dateStart, dateEnd } = trip
+    const { tripNote } = req.body
+    const { userId, tripId, tripNoteType, tag, title, subtitle } = tripNote
     console.log(req.body)
-    const newTrip = await prisma.trip.create({
+    const existingTrip = await prisma.tripNote.update({
+      where: { id: parseInt(tripNoteIdInt) },
       data: {
-        User: {
-          connect: {
-            id: 1
-          }
-        },
-        nickname,
-        dateStart: new Date(dateStart),
-        dateEnd: new Date(dateEnd)
+        tripNoteType,
+        tag,
+        title,
+        subtitle
       }
     })
 
     res.status(201)
-    res.json({ trip })
+    res.json({ tripNote })
   } catch (err) {
     res.status(500)
     res.json({ error: err.message })
-    console.log(err.message)
   } finally {
     await prisma.$disconnect()
   }

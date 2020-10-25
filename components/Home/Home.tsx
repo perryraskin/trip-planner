@@ -9,6 +9,7 @@ dayjs.extend(utc)
 
 import withLayout from "../../hocs/withLayout"
 import utilities from "../../utilities"
+import { Trip } from "../../models/interfaces"
 
 import Section from "../Layout/Section"
 import Button from "../Elements/Button"
@@ -80,7 +81,7 @@ const Home: NextPage<Props> = ({}) => {
                   {trips
                     ? trips.map((trip: Trip) => {
                         return (
-                          <tr key={trip.id} className="hover:bg-blue-100">
+                          <tr key={trip.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4 whitespace-no-wrap">
                               <div className="flex items-center">
                                 {/* <div className="flex-shrink-0 h-10 w-10">
@@ -93,7 +94,7 @@ const Home: NextPage<Props> = ({}) => {
                                 <div className="ml-4">
                                   <div className="text-sm leading-5 font-medium text-gray-900">
                                     <Link href={`/trip/${trip.id}`}>
-                                      {trip.nickname}
+                                      <a>{trip.nickname}</a>
                                     </Link>
                                   </div>
                                   {/* <div className="text-sm leading-5 text-gray-500">
@@ -151,46 +152,3 @@ const Home: NextPage<Props> = ({}) => {
 }
 
 export default withLayout(Home)
-
-export interface Trip {
-  id: number
-  nickname: string
-  dateStart: Date
-  dateEnd: Date
-  headerImageUrl: string
-  userId: number
-  TripNotes: Array<TripNote>
-}
-
-export interface TripNote {
-  id: number
-  title: string
-  subtitle: string
-  tripNoteType: TripNoteType
-  tag: string
-  userId: number
-  tripId: number
-  TripNoteItems: Array<TripNoteItem>
-}
-
-export enum TripNoteType {
-  Lodging = 1,
-  Transit = 2,
-  Excursion = 3
-}
-
-export interface TripNoteItem {
-  id: number
-  title: string
-  subtitle: string
-  details: string
-  tripNoteId: number
-  TripNoteImages: Array<TripNoteItemImage>
-}
-
-export interface TripNoteItemImage {
-  id: number
-  name: string
-  sourceUrl: string
-  tripNoteItemId: number
-}

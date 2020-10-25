@@ -4,7 +4,7 @@ import absoluteUrl from "next-absolute-url"
 
 import TripDetail from "../../components/TripDetail/TripDetail"
 
-import { Trip, TripNote } from "../../components/Home/Home"
+import { Trip } from "../../models/interfaces"
 
 interface Props {
   trip?: Trip

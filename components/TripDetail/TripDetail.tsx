@@ -13,7 +13,7 @@ import utilities from "../../utilities"
 import Section from "../Layout/Section"
 import Button from "../Elements/Button"
 
-import { Trip, TripNote, TripNoteType } from "../Home/Home"
+import { Trip, TripNote, TripNoteType } from "../../models/interfaces"
 
 interface Props {
   trip: Trip
@@ -39,6 +39,38 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
   //   "trips",
   //   fetchTripNotesRequest
   // )
+
+  const [mutateDeleteTripNote] = useMutation(
+    (tripNoteId: number) =>
+      fetch(`/api/tripnote/${tripNoteId}/delete`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }),
+    {
+      onSuccess: () => {
+        //queryCache.invalidateQueries("tripNotes")
+      }
+    }
+  )
+
+  async function confirmDelete(tripNoteId: number) {
+    const choseToDelete = window.confirm("Delete Trip Note?")
+    if (choseToDelete) {
+      const res = await fetch(`/api/tripnote/${tripNoteId}/delete`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      const data = await res.json()
+      if (!data.error) {
+        console.log(data)
+        document.getElementById(tripNoteId.toString()).remove()
+      }
+    }
+  }
   return (
     <Section extend="mb-20 w-full py-12 px-4">
       <div className="lg:flex lg:items-center lg:justify-between">
@@ -92,81 +124,33 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
               </a>
             </Link>
           </span>
+          <span className="ml-3 shadow-sm rounded-md">
+            <Link href={`/trip/${trip.id}/tripnote/new`}>
+              <button
+                type="button"
+                className="inline-flex items-center px-4 py-2 border border-transparent 
+              text-sm leading-5 font-medium rounded-md text-white 
+              bg-blue-600 hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue 
+              focus:border-blue-700 active:bg-blue-700 transition duration-150 ease-in-out"
+              >
+                <svg
+                  className="-ml-1 mr-2 h-5 w-5"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="3"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  ></path>
+                </svg>
+                Trip Note
+              </button>
+            </Link>
+          </span>
         </div>
-      </div>
-      <div className="mt-6 flex">
-        <span className="sm:ml-3 shadow-sm rounded-md">
-          <button
-            type="button"
-            className="inline-flex items-center px-4 py-2 border border-transparent 
-              text-sm leading-5 font-medium rounded-md text-white 
-              bg-blue-600 hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue 
-              focus:border-blue-700 active:bg-blue-700 transition duration-150 ease-in-out"
-          >
-            <svg
-              className="-ml-1 mr-2 h-5 w-5"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="3"
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              ></path>
-            </svg>
-            Lodging
-          </button>
-        </span>
-        <span className="sm:ml-3 shadow-sm rounded-md">
-          <button
-            type="button"
-            className="inline-flex items-center px-4 py-2 border border-transparent 
-              text-sm leading-5 font-medium rounded-md text-white 
-              bg-blue-600 hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue 
-              focus:border-blue-700 active:bg-blue-700 transition duration-150 ease-in-out"
-          >
-            <svg
-              className="-ml-1 mr-2 h-5 w-5"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="3"
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              ></path>
-            </svg>
-            Transit
-          </button>
-        </span>
-        <span className="sm:ml-3 shadow-sm rounded-md">
-          <button
-            type="button"
-            className="inline-flex items-center px-4 py-2 border border-transparent 
-              text-sm leading-5 font-medium rounded-md text-white 
-              bg-blue-600 hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue 
-              focus:border-blue-700 active:bg-blue-700 transition duration-150 ease-in-out"
-          >
-            <svg
-              className="-ml-1 mr-2 h-5 w-5"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="3"
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              ></path>
-            </svg>
-            Excursion
-          </button>
-        </span>
       </div>
 
       {/* TRIP NOTES */}
@@ -199,20 +183,26 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
                   {trip.TripNotes
                     ? trip.TripNotes.map((tripNote: TripNote) => {
                         return (
-                          <tr key={trip.id} className="hover:bg-blue-100">
+                          <tr
+                            key={tripNote.id}
+                            id={tripNote.id.toString()}
+                            className="hover:bg-gray-50"
+                          >
                             <td className="px-6 py-4 whitespace-no-wrap">
                               <div className="flex items-center">
-                                {/* <div className="flex-shrink-0 h-10 w-10">
-                            <img
-                              className="h-10 w-10 rounded-full"
-                              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=4&amp;w=256&amp;h=256&amp;q=60"
-                              alt=""
-                            />
-                          </div> */}
+                                <div className="flex-shrink-0 h-10 w-10">
+                                  <img
+                                    className="h-10 w-10 rounded-full"
+                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSUx2RGlMheX8joff0V1fQ-L3wCIDn67HuNSw&usqp=CAU"
+                                    alt=""
+                                  />
+                                </div>
                                 <div className="ml-4">
                                   <div className="text-sm leading-5 font-medium text-gray-900">
-                                    <Link href={`/tripnote/${tripNote.id}`}>
-                                      {tripNote.title}
+                                    <Link
+                                      href={`/trip/${tripNote.tripId}/tripnote/${tripNote.id}`}
+                                    >
+                                      <a>{tripNote.title}</a>
                                     </Link>
                                   </div>
                                   <div className="text-sm leading-5 text-gray-500">
@@ -223,7 +213,10 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
                             </td>
                             <td className="px-6 py-4 whitespace-no-wrap">
                               <div className="text-sm leading-5 text-gray-900">
-                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                <span
+                                  className="px-2 inline-flex text-xs leading-5 
+                                font-semibold rounded-full bg-indigo-100 text-indigo-800"
+                                >
                                   {tripNote.tripNoteType ===
                                   TripNoteType.Lodging
                                     ? "Lodging"
@@ -244,7 +237,9 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
                               className="px-6 py-4 whitespace-no-wrap text-right 
                             text-sm leading-5 font-medium"
                             >
-                              <Link href={`/tripnote/${tripNote.id}/edit`}>
+                              <Link
+                                href={`trip/${tripNote.tripId}/tripnote/${tripNote.id}/edit`}
+                              >
                                 <a className="text-blue-600 hover:text-blue-900 mr-4">
                                   Edit
                                 </a>
@@ -252,7 +247,7 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
                               <a
                                 href="#"
                                 className="text-red-600 hover:text-red-900"
-                                //onClick={() => confirmDelete(trip.id)}
+                                onClick={() => confirmDelete(tripNote.id)}
                               >
                                 Delete
                               </a>

@@ -10,7 +10,7 @@ import utilities from "../../utilities"
 import Section from "../Layout/Section"
 import Button from "../Elements/Button"
 
-import { Trip } from "../../components/Home/Home"
+import { Trip } from "../../models/interfaces"
 
 interface Props {}
 

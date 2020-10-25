@@ -53,7 +53,9 @@ class MyApp extends App {
           {/* <meta key="twitter:image" property="twitter:image" content="" /> */}
           <meta key="twitter:card" property="twitter:card" content="summary" />
         </Head>
-        <Component {...pageProps} />
+        <div className="bg-gray-100">
+          <Component {...pageProps} />
+        </div>
       </>
     )
   }
