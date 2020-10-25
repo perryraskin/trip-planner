@@ -20,7 +20,7 @@ async function fetchTripRequest() {
   const pathname = window.location.pathname
   const tripNoteIndex = pathname.indexOf("tripnote")
   const tripPathname = pathname.substring(0, tripNoteIndex)
-  const tripId = pathname.replace(/[^\d.]/g, "")
+  const tripId = tripPathname.replace(/[^\d.]/g, "")
   const res = await fetch(`/api/trip/${tripId}`)
   const data = await res.json()
   const { trip } = data
@@ -51,6 +51,8 @@ const TripNoteForm: NextPage<Props> = ({}) => {
   const [subtitle, setSubtitle] = React.useState("")
   const [tag, setTag] = React.useState("")
   const [type, setType] = React.useState(TripNoteType.Lodging)
+  const [price, setPrice] = React.useState("0")
+  const [currency, setCurrency] = React.useState("")
 
   async function sendTripNoteData(e, tripNoteData) {
     e.preventDefault()
@@ -67,7 +69,7 @@ const TripNoteForm: NextPage<Props> = ({}) => {
       console.log(res)
       res.json().then(res => {
         console.log(res)
-        router.push(`/trip/${trip.id}`)
+        router.push(`/trip/${currentTrip.id}`)
       })
     }
   }
@@ -76,7 +78,7 @@ const TripNoteForm: NextPage<Props> = ({}) => {
       <div className="flex-1 min-w-0">
         <div>
           <h2 className="mt-6 text-3xl leading-9 font-extrabold">
-            {trip ? trip.nickname : ""}
+            {trip ? currentTrip.nickname : ""}
           </h2>
         </div>
         <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap">
@@ -94,8 +96,8 @@ const TripNoteForm: NextPage<Props> = ({}) => {
                 clipRule="evenodd"
               />
             </svg>
-            {trip ? dayjs.utc(trip.dateStart).format("MM/DD/YYYY") : ""} to{" "}
-            {trip ? dayjs.utc(trip.dateEnd).format("MM/DD/YYYY") : ""}
+            {trip ? dayjs.utc(currentTrip.dateStart).format("MM/DD/YYYY") : ""}{" "}
+            to {trip ? dayjs.utc(currentTrip.dateEnd).format("MM/DD/YYYY") : ""}
           </div>
         </div>
       </div>
@@ -125,10 +127,7 @@ const TripNoteForm: NextPage<Props> = ({}) => {
                   <div className="px-4 py-5 bg-white sm:p-6">
                     <div className="grid grid-cols-6 gap-6">
                       <div className="col-span-6 sm:col-span-3">
-                        <label
-                          htmlFor="first_name"
-                          className="block text-sm font-medium leading-5 text-gray-700"
-                        >
+                        <label className="block text-sm font-medium leading-5 text-gray-700">
                           Title
                         </label>
                         <input
@@ -139,13 +138,13 @@ const TripNoteForm: NextPage<Props> = ({}) => {
                           transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                           placeholder="King Bed Ocean Front"
                           onChange={e => setTitle(e.target.value)}
+                          defaultValue={
+                            currentTripNote ? currentTripNote.title : ""
+                          }
                         />
                       </div>
                       <div className="col-span-6 sm:col-span-3">
-                        <label
-                          htmlFor="last_name"
-                          className="block text-sm font-medium leading-5 text-gray-700"
-                        >
+                        <label className="block text-sm font-medium leading-5 text-gray-700">
                           Subtitle
                         </label>
                         <input
@@ -156,13 +155,13 @@ const TripNoteForm: NextPage<Props> = ({}) => {
                           duration-150 ease-in-out sm:text-sm sm:leading-5"
                           placeholder="Ground Floor"
                           onChange={e => setSubtitle(e.target.value)}
+                          defaultValue={
+                            currentTripNote ? currentTripNote.subtitle : ""
+                          }
                         />
                       </div>
                       <div className="col-span-6 sm:col-span-4">
-                        <label
-                          htmlFor="email_address"
-                          className="block text-sm font-medium leading-5 text-gray-700"
-                        >
+                        <label className="block text-sm font-medium leading-5 text-gray-700">
                           Tag
                         </label>
                         <input
@@ -173,13 +172,13 @@ const TripNoteForm: NextPage<Props> = ({}) => {
                           transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                           placeholder="hotel-room"
                           onChange={e => setTag(e.target.value)}
+                          defaultValue={
+                            currentTripNote ? currentTripNote.tag : ""
+                          }
                         />
                       </div>
                       <div className="col-span-6 sm:col-span-3">
-                        <label
-                          htmlFor="country"
-                          className="block text-sm font-medium leading-5 text-gray-700"
-                        >
+                        <label className="block text-sm font-medium leading-5 text-gray-700">
                           Type
                         </label>
                         <select
@@ -190,6 +189,9 @@ const TripNoteForm: NextPage<Props> = ({}) => {
                           onChange={e =>
                             setType(parseInt(e.target.value) as TripNoteType)
                           }
+                          defaultValue={
+                            currentTripNote ? currentTripNote.tripNoteType : ""
+                          }
                         >
                           <option value={TripNoteType.Lodging}>Lodging</option>
                           <option value={TripNoteType.Transit}>Transit</option>
@@ -199,51 +201,35 @@ const TripNoteForm: NextPage<Props> = ({}) => {
                         </select>
                       </div>
                       {/* <div className="col-span-6">
-                        <label
-                          htmlFor="street_address"
-                          className="block text-sm font-medium leading-5 text-gray-700"
-                        >
+                        <label className="block text-sm font-medium leading-5 text-gray-700">
                           Location
                         </label>
-                        <input
-                          id="street_address"
-                          className="mt-1 form-input block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                        />
+                        <input className="mt-1 form-input block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5" />
                       </div>
                       <div className="col-span-6 sm:col-span-6 lg:col-span-2">
-                        <label
-                          htmlFor="city"
-                          className="block text-sm font-medium leading-5 text-gray-700"
-                        >
-                          City
+                        <label className="block text-sm font-medium leading-5 text-gray-700">
+                          Price
                         </label>
                         <input
-                          id="city"
-                          className="mt-1 form-input block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                          className="mt-1 form-input block w-full py-2 px-3 
+                          border border-gray-300 rounded-md shadow-sm 
+                          focus:outline-none focus:shadow-outline-blue focus:border-blue-300 
+                          transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                          onChange={e => setPrice(e.target.value)}
+                          defaultValue={
+                            currentTripNote ? currentTripNote.tag : ""
+                          }
                         />
                       </div>
                       <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                        <label
-                          htmlFor="state"
-                          className="block text-sm font-medium leading-5 text-gray-700"
-                        >
-                          State / Province
+                        <label className="block text-sm font-medium leading-5 text-gray-700">
+                          Currency
                         </label>
                         <input
-                          id="state"
-                          className="mt-1 form-input block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                        />
-                      </div>
-                      <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                        <label
-                          htmlFor="postal_code"
-                          className="block text-sm font-medium leading-5 text-gray-700"
-                        >
-                          ZIP / Postal
-                        </label>
-                        <input
-                          id="postal_code"
-                          className="mt-1 form-input block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                          className="mt-1 form-input block w-full py-2 px-3 
+                          border border-gray-300 rounded-md shadow-sm 
+                          focus:outline-none focus:shadow-outline-blue focus:border-blue-300 
+                          transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                         />
                       </div> */}
                     </div>
@@ -257,7 +243,7 @@ const TripNoteForm: NextPage<Props> = ({}) => {
                       onClick={e =>
                         sendTripNoteData(e, {
                           tripNote: {
-                            tripId: trip.id,
+                            tripId: currentTrip.id,
                             tripNoteType: type,
                             tag,
                             title,

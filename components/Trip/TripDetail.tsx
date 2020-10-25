@@ -19,41 +19,9 @@ interface Props {
   trip: Trip
 }
 
-async function fetchTripNotesRequest() {
-  const res = await fetch("/api/tripnotes")
-  const data = await res.json()
-  const { trips } = data
-  return trips
-}
-
 const TripDetail: NextPage<Props> = ({ trip }) => {
   const router = useRouter()
   const now = dayjs()
-  const [nickname, setNickname] = React.useState("")
-  const [dateStart, setDateStart] = React.useState(now.format("YYYY-MM-DD"))
-  const [dateEnd, setDateEnd] = React.useState(
-    now.add(1, "day").format("YYYY-MM-DD")
-  )
-
-  // const { data: tripnotes, error, isFetching } = useQuery(
-  //   "trips",
-  //   fetchTripNotesRequest
-  // )
-
-  const [mutateDeleteTripNote] = useMutation(
-    (tripNoteId: number) =>
-      fetch(`/api/tripnote/${tripNoteId}/delete`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }),
-    {
-      onSuccess: () => {
-        //queryCache.invalidateQueries("tripNotes")
-      }
-    }
-  )
 
   async function confirmDelete(tripNoteId: number) {
     const choseToDelete = window.confirm("Delete Trip Note?")
@@ -238,7 +206,7 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
                             text-sm leading-5 font-medium"
                             >
                               <Link
-                                href={`trip/${tripNote.tripId}/tripnote/${tripNote.id}/edit`}
+                                href={`/trip/${tripNote.tripId}/tripnote/${tripNote.id}/edit`}
                               >
                                 <a className="text-blue-600 hover:text-blue-900 mr-4">
                                   Edit
