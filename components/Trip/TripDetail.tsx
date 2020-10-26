@@ -168,7 +168,8 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
                                 <div className="ml-4">
                                   <div className="text-sm leading-5 font-medium text-gray-900">
                                     <Link
-                                      href={`/trip/${tripNote.tripId}/tripnote/${tripNote.id}`}
+                                      href="/trip/[tripid]/tripnote/[tripnoteid]"
+                                      as={`/trip/${tripNote.tripId}/tripnote/${tripNote.id}`}
                                     >
                                       <a>{tripNote.title}</a>
                                     </Link>
@@ -206,7 +207,8 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
                             text-sm leading-5 font-medium"
                             >
                               <Link
-                                href={`/trip/${tripNote.tripId}/tripnote/${tripNote.id}/edit`}
+                                href="/trip/[tripid]/tripnote/[tripnoteid]/edit"
+                                as={`/trip/${tripNote.tripId}/tripnote/${tripNote.id}/edit`}
                               >
                                 <a className="text-blue-600 hover:text-blue-900 mr-4">
                                   Edit

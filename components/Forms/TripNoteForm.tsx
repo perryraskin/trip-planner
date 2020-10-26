@@ -27,19 +27,6 @@ async function fetchTripRequest() {
   return trip
 }
 
-async function fetchTripNoteRequest() {
-  if (!window.location.pathname.includes("new")) {
-    const pathname = window.location.pathname
-    const tripNoteIndex = pathname.indexOf("tripnote")
-    const tripNotePathname = pathname.substring(tripNoteIndex)
-    const tripNoteId = tripNotePathname.replace(/[^\d.]/g, "")
-    const res = await fetch(`/api/tripnote/${tripNoteId}`)
-    const data = await res.json()
-    const { tripNote } = data
-    return tripNote
-  }
-}
-
 const TripNoteForm: NextPage<Props> = ({}) => {
   const router = useRouter()
   const now = dayjs()
@@ -47,12 +34,37 @@ const TripNoteForm: NextPage<Props> = ({}) => {
   const currentTrip: Trip = trip
   const { data: tripNote } = useQuery("tripnote", fetchTripNoteRequest)
   const currentTripNote: TripNote = tripNote
-  const [title, setTitle] = React.useState("")
-  const [subtitle, setSubtitle] = React.useState("")
-  const [tag, setTag] = React.useState("")
-  const [type, setType] = React.useState(TripNoteType.Lodging)
+  const [title, setTitle] = React.useState(
+    currentTripNote ? currentTripNote.title : ""
+  )
+  const [subtitle, setSubtitle] = React.useState(
+    currentTripNote ? currentTripNote.subtitle : ""
+  )
+  const [tag, setTag] = React.useState(
+    currentTripNote ? currentTripNote.tag : ""
+  )
+  const [type, setType] = React.useState(
+    currentTripNote ? currentTripNote.tripNoteType : "1"
+  )
   const [price, setPrice] = React.useState("0")
   const [currency, setCurrency] = React.useState("")
+
+  async function fetchTripNoteRequest() {
+    if (!window.location.pathname.includes("new")) {
+      const pathname = window.location.pathname
+      const tripNoteIndex = pathname.indexOf("tripnote")
+      const tripNotePathname = pathname.substring(tripNoteIndex)
+      const tripNoteId = tripNotePathname.replace(/[^\d.]/g, "")
+      const res = await fetch(`/api/tripnote/${tripNoteId}`)
+      const data = await res.json()
+      const { tripNote } = data
+      setTitle(tripNote.title)
+      setSubtitle(tripNote.subtitle)
+      setTag(tripNote.tag)
+      setType(tripNote.tripNoteType)
+      return tripNote
+    }
+  }
 
   async function sendTripNoteData(e, tripNoteData) {
     e.preventDefault()
@@ -68,8 +80,10 @@ const TripNoteForm: NextPage<Props> = ({}) => {
     if (res) {
       console.log(res)
       res.json().then(res => {
-        console.log(res)
-        router.push(`/trip/${currentTrip.id}`)
+        const { tripNoteResponse } = res
+        router.push(
+          `/trip/${tripNoteResponse.tripId}/tripnote/${tripNoteResponse.id}`
+        )
       })
     }
   }
@@ -78,7 +92,7 @@ const TripNoteForm: NextPage<Props> = ({}) => {
       <div className="flex-1 min-w-0">
         <div>
           <h2 className="mt-6 text-3xl leading-9 font-extrabold">
-            {trip ? currentTrip.nickname : ""}
+            {currentTrip ? currentTrip.nickname : ""}
           </h2>
         </div>
         <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap">
@@ -131,16 +145,13 @@ const TripNoteForm: NextPage<Props> = ({}) => {
                           Title
                         </label>
                         <input
-                          id="first_name"
                           className="mt-1 form-input block w-full py-2 px-3 
                           border border-gray-300 rounded-md shadow-sm 
                           focus:outline-none focus:shadow-outline-blue focus:border-blue-300 
                           transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                           placeholder="King Bed Ocean Front"
                           onChange={e => setTitle(e.target.value)}
-                          defaultValue={
-                            currentTripNote ? currentTripNote.title : ""
-                          }
+                          value={title}
                         />
                       </div>
                       <div className="col-span-6 sm:col-span-3">
@@ -148,16 +159,13 @@ const TripNoteForm: NextPage<Props> = ({}) => {
                           Subtitle
                         </label>
                         <input
-                          id="last_name"
                           className="mt-1 form-input block w-full py-2 px-3 
                           border border-gray-300 rounded-md shadow-sm focus:outline-none 
                           focus:shadow-outline-blue focus:border-blue-300 transition 
                           duration-150 ease-in-out sm:text-sm sm:leading-5"
                           placeholder="Ground Floor"
                           onChange={e => setSubtitle(e.target.value)}
-                          defaultValue={
-                            currentTripNote ? currentTripNote.subtitle : ""
-                          }
+                          value={subtitle}
                         />
                       </div>
                       <div className="col-span-6 sm:col-span-4">
@@ -165,16 +173,13 @@ const TripNoteForm: NextPage<Props> = ({}) => {
                           Tag
                         </label>
                         <input
-                          id="email_address"
                           className="mt-1 form-input block w-full py-2 px-3 
                           border border-gray-300 rounded-md shadow-sm 
                           focus:outline-none focus:shadow-outline-blue focus:border-blue-300 
                           transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                           placeholder="hotel-room"
                           onChange={e => setTag(e.target.value)}
-                          defaultValue={
-                            currentTripNote ? currentTripNote.tag : ""
-                          }
+                          value={tag}
                         />
                       </div>
                       <div className="col-span-6 sm:col-span-3">
@@ -189,9 +194,7 @@ const TripNoteForm: NextPage<Props> = ({}) => {
                           onChange={e =>
                             setType(parseInt(e.target.value) as TripNoteType)
                           }
-                          defaultValue={
-                            currentTripNote ? currentTripNote.tripNoteType : ""
-                          }
+                          value={type}
                         >
                           <option value={TripNoteType.Lodging}>Lodging</option>
                           <option value={TripNoteType.Transit}>Transit</option>
@@ -216,7 +219,7 @@ const TripNoteForm: NextPage<Props> = ({}) => {
                           focus:outline-none focus:shadow-outline-blue focus:border-blue-300 
                           transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                           onChange={e => setPrice(e.target.value)}
-                          defaultValue={
+                          value={
                             currentTripNote ? currentTripNote.tag : ""
                           }
                         />

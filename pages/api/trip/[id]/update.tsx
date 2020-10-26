@@ -13,7 +13,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
     const { trip } = req.body
     const { nickname, dateStart, dateEnd } = trip
     console.log(req.body)
-    const existingTrip = await prisma.trip.update({
+    const tripResponse = await prisma.trip.update({
       where: { id: parseInt(tripIdInt) },
       data: {
         nickname,
@@ -23,7 +23,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
     })
 
     res.status(201)
-    res.json({ trip })
+    res.json({ tripResponse })
   } catch (err) {
     res.status(500)
     res.json({ error: err.message })

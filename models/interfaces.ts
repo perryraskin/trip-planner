@@ -1,3 +1,5 @@
+import { TripNoteCost } from "@prisma/client"
+
 export interface Trip {
   id: number
   nickname: string
@@ -16,6 +18,8 @@ export interface TripNote {
   tag: string
   userId: number
   tripId: number
+  Trip: Trip
+  TripNoteCosts: Array<TripNoteCost>
   TripNoteItems: Array<TripNoteItem>
 }
 

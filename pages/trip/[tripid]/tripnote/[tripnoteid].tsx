@@ -2,22 +2,17 @@ import React, { useState, useEffect, useContext } from "react"
 import { NextPage, GetServerSideProps } from "next"
 import absoluteUrl from "next-absolute-url"
 
-import TripDetail from "../../../../components/Trip/TripDetail"
+import TripNoteDetail from "../../../../components/TripNote/TripNoteDetail"
 
 import { Trip, TripNote } from "../../../../models/interfaces"
 
 interface Props {
-  trip?: Trip
+  tripNote?: TripNote
   errors?: any
 }
 
-const TripNoteDetailPage: NextPage<Props> = ({ trip, errors }) => {
-  // return <TripDetail trip={trip} />
-  return (
-    <div>
-      <h1>Trip Note Detail</h1>
-    </div>
-  )
+const TripNoteDetailPage: NextPage<Props> = ({ tripNote, errors }) => {
+  return <TripNoteDetail tripNote={tripNote} />
 }
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
@@ -31,13 +26,13 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   //console.log('sessionId:', sessionId);
   const res = await fetch(apiUrl)
   const resData = await res.json()
-  const { trip } = resData
-  //console.log("res:", trip)
+  const { tripNote } = resData
+  //console.log("res:", tripNote)
 
-  if (trip) {
+  if (tripNote) {
     return {
       props: {
-        trip
+        tripNote
       }
     }
   } else {

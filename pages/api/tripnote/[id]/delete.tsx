@@ -17,7 +17,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
     })
 
     res.status(201)
-    res.json({ message: "Trip Note deleted" })
+    res.json({ message: "Trip Note deleted", deletedTripNote })
   } catch (err) {
     res.status(500)
     res.json({ error: err.message })

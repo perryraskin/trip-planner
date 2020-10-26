@@ -15,6 +15,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         id: parseInt(tripNoteIdInt)
       },
       include: {
+        Trip: true,
         TripNoteCosts: true,
         TripNoteItems: {
           include: {

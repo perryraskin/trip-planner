@@ -3,6 +3,8 @@ import { NextPage } from "next"
 import { Router, useRouter } from "next/router"
 import { useQuery, useMutation, queryCache } from "react-query"
 import dayjs from "dayjs"
+import utc from "dayjs/plugin/utc"
+dayjs.extend(utc)
 
 import withLayout from "../../hocs/withLayout"
 import utilities from "../../utilities"
@@ -14,26 +16,37 @@ import { Trip } from "../../models/interfaces"
 
 interface Props {}
 
-async function fetchTripRequest() {
-  if (!window.location.pathname.includes("new")) {
-    const tripId = window.location.pathname.replace(/[^\d.]/g, "")
-    const res = await fetch(`/api/trip/${tripId}`)
-    const data = await res.json()
-    const { trip } = data
-    return trip
-  }
-}
-
 const TripForm: NextPage<Props> = ({}) => {
   const router = useRouter()
   const now = dayjs()
   const { data: trip } = useQuery("trip", fetchTripRequest)
   const currentTrip: Trip = trip
-  const [nickname, setNickname] = React.useState("")
-  const [dateStart, setDateStart] = React.useState(now.format("YYYY-MM-DD"))
-  const [dateEnd, setDateEnd] = React.useState(
-    now.add(1, "day").format("YYYY-MM-DD")
+  const [nickname, setNickname] = React.useState(
+    currentTrip ? currentTrip.nickname : ""
   )
+  const [dateStart, setDateStart] = React.useState(
+    currentTrip
+      ? dayjs.utc(currentTrip.dateStart).format("YYYY-MM-DD")
+      : now.format("YYYY-MM-DD")
+  )
+  const [dateEnd, setDateEnd] = React.useState(
+    currentTrip
+      ? dayjs.utc(currentTrip.dateEnd).format("YYYY-MM-DD")
+      : now.add(1, "day").format("YYYY-MM-DD")
+  )
+
+  async function fetchTripRequest() {
+    if (!window.location.pathname.includes("new")) {
+      const tripId = window.location.pathname.replace(/[^\d.]/g, "")
+      const res = await fetch(`/api/trip/${tripId}`)
+      const data = await res.json()
+      const { trip } = data
+      setNickname(trip.nickname)
+      setDateStart(dayjs.utc(trip.dateStart).format("YYYY-MM-DD"))
+      setDateEnd(dayjs.utc(trip.dateEnd).format("YYYY-MM-DD"))
+      return trip
+    }
+  }
 
   async function sendTripData(e, tripData) {
     e.preventDefault()
@@ -49,96 +62,102 @@ const TripForm: NextPage<Props> = ({}) => {
     if (res) {
       console.log(res)
       res.json().then(res => {
-        console.log(res)
-        router.push("/")
+        const { tripResponse } = res
+        router.push(`/trip/${tripResponse.id}`)
       })
     }
   }
   return (
     <Section>
       <div>
-        <h2 className="mt-6 text-3xl leading-9 font-extrabold">
-          {currentTrip ? "Edit" : "New"} Trip
-        </h2>
+        <div className="mt-10 sm:mt-0">
+          <div className="md:grid md:grid-cols-3 md:gap-6">
+            <div className="md:col-span-1">
+              <div className="px-4 sm:px-0">
+                <h3 className="text-lg font-medium leading-6 text-gray-900">
+                  {currentTrip ? "Edit" : "New"} Trip
+                </h3>
+                <p className="mt-1 text-sm leading-5 text-gray-600">
+                  Here you can provide details of a Trip.
+                </p>
+              </div>
+            </div>
+            <div className="mt-5 md:mt-0 md:col-span-2">
+              <form action="#" method="POST">
+                <div className="shadow overflow-hidden sm:rounded-md">
+                  <div className="px-4 py-5 bg-white sm:p-6">
+                    <div className="grid grid-cols-6 gap-6">
+                      <div className="col-span-6 sm:col-span-4">
+                        <label className="block text-sm font-medium leading-5 text-gray-700">
+                          Trip Name
+                        </label>
+                        <input
+                          className="mt-1 form-input block w-full py-2 px-3 
+                          border border-gray-300 rounded-md shadow-sm 
+                          focus:outline-none focus:shadow-outline-blue focus:border-blue-300 
+                          transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                          placeholder="Our Hawaii Honeymoon"
+                          onChange={e => setNickname(e.target.value)}
+                          value={nickname}
+                        />
+                      </div>
+                      <div className="col-span-6 sm:col-span-3">
+                        <label className="block text-sm font-medium leading-5 text-gray-700">
+                          Date Start
+                        </label>
+                        <input
+                          id="dateStart"
+                          className="mt-1 form-input block w-full py-2 px-3 
+                          border border-gray-300 rounded-md shadow-sm focus:outline-none 
+                          focus:shadow-outline-blue focus:border-blue-300 transition 
+                          duration-150 ease-in-out sm:text-sm sm:leading-5"
+                          type="date"
+                          value={dateStart}
+                          onChange={e => setDateStart(e.target.value)}
+                        />
+                      </div>
+                      <div className="col-span-6 sm:col-span-3">
+                        <label className="block text-sm font-medium leading-5 text-gray-700">
+                          Date End
+                        </label>
+                        <input
+                          id="dateEnd"
+                          className="mt-1 form-input block w-full py-2 px-3 
+                          border border-gray-300 rounded-md shadow-sm 
+                          focus:outline-none focus:shadow-outline-blue focus:border-blue-300 
+                          transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                          type="date"
+                          value={dateEnd}
+                          onChange={e => setDateEnd(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="px-4 py-3 bg-gray-50 text-center sm:px-6">
+                    <button
+                      className="py-2 px-4 border border-transparent text-sm 
+                    leading-5 font-medium rounded-md text-white bg-blue-600 
+                    shadow-sm hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue 
+                    active:bg-blue-600 transition duration-150 ease-in-out w-full sm:w-1/4"
+                      onClick={e =>
+                        sendTripData(e, {
+                          trip: {
+                            nickname,
+                            dateStart,
+                            dateEnd
+                          }
+                        })
+                      }
+                    >
+                      Submit
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
-      <form className="mt-8">
-        <input type="hidden" name="remember" value="true" />
-        <div>
-          <div>
-            <label className="mt-6 leading-9 font-semibold">Nickname</label>
-            <input
-              aria-label="Nickname"
-              name="nickname"
-              type="text"
-              required
-              className="appearance-none rounded relative block w-full px-3 py-2 
-              border border-gray-300 placeholder-gray-500 mb-4
-              focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 
-              sm:text-sm sm:leading-5"
-              placeholder="Our Hawaii Honeymoon"
-              onChange={e => setNickname(e.target.value)}
-              defaultValue={trip ? trip.nickname : ""}
-            />
-          </div>
-          <div className="-mt-px">
-            <label className="mt-6 leading-9 font-semibold">Date Start</label>
-            <input
-              aria-label="Date start"
-              name="date_start"
-              type="date"
-              required
-              className="appearance-none rounded relative block w-full px-3 py-2 
-              border border-gray-300 placeholder-gray-500 mb-4 focus:outline-none 
-              focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5"
-              defaultValue={
-                trip
-                  ? dayjs(trip.dateStart).format("YYYY-MM-DD")
-                  : now.format("YYYY-MM-DD")
-              }
-              onChange={e => setDateStart(e.target.value)}
-            />
-          </div>
-          <div className="-mt-px">
-            <label className="mt-6 leading-9 font-semibold">Date End</label>
-            <input
-              aria-label="Date end"
-              name="date_end"
-              type="date"
-              required
-              className="appearance-none rounded relative block w-full px-3 py-2 
-              border border-gray-300 placeholder-gray-500 focus:outline-none focus:shadow-outline-blue 
-              focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5"
-              defaultValue={
-                trip
-                  ? dayjs(trip.dateEnd).format("YYYY-MM-DD")
-                  : now.add(1, "day").format("YYYY-MM-DD")
-              }
-              onChange={e => setDateEnd(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div className="mt-10">
-          <button
-            className="group relative w-full flex justify-center py-2 px-4 
-            border border-transparent text-sm leading-5 font-medium 
-            rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none 
-            focus:border-blue-700 focus:shadow-outline-indigo active:bg-indigo-700 
-            transition duration-150 ease-in-out text-lg md:text-base"
-            onClick={e =>
-              sendTripData(e, {
-                trip: {
-                  nickname,
-                  dateStart,
-                  dateEnd
-                }
-              })
-            }
-          >
-            Tripnotize me cap'n!
-          </button>
-        </div>
-      </form>
     </Section>
   )
 }

@@ -8,7 +8,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
     const { trip } = req.body
     const { nickname, dateStart, dateEnd } = trip
     console.log(req.body)
-    const newTrip = await prisma.trip.create({
+    const tripResponse = await prisma.trip.create({
       data: {
         User: {
           connect: {
@@ -22,7 +22,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
     })
 
     res.status(201)
-    res.json({ trip })
+    res.json({ tripResponse })
   } catch (err) {
     res.status(500)
     res.json({ error: err.message })

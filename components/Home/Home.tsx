@@ -93,7 +93,10 @@ const Home: NextPage<Props> = ({}) => {
                           </div> */}
                                 <div className="ml-4">
                                   <div className="text-sm leading-5 font-medium text-gray-900">
-                                    <Link href={`/trip/${trip.id}`}>
+                                    <Link
+                                      href="/trip/[tripid]"
+                                      as={`/trip/${trip.id}`}
+                                    >
                                       <a>{trip.nickname}</a>
                                     </Link>
                                   </div>
@@ -124,7 +127,10 @@ const Home: NextPage<Props> = ({}) => {
                               className="px-6 py-4 whitespace-no-wrap text-right 
                             text-sm leading-5 font-medium"
                             >
-                              <Link href={`/trip/${trip.id}/edit`}>
+                              <Link
+                                href="/trip/[tripid]/edit"
+                                as={`/trip/${trip.id}/edit`}
+                              >
                                 <a className="text-blue-600 hover:text-blue-900 mr-4">
                                   Edit
                                 </a>

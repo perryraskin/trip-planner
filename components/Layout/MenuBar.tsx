@@ -56,11 +56,28 @@ const MenuBar: NextPage<Props> = ({}) => {
       <div className="flex items-center">
         <Link href={`/trip/new`}>
           <a>
-            <Button
-              text="New Trip"
-              extend="bg-blue-600 text-white uppercase tracking-wider border-2 border-white
-          hover:bg-blue-500"
-            />
+            <button
+              type="button"
+              className="inline-flex items-center px-4 py-2 border-2 border-white 
+              text-sm leading-5 font-bold rounded-md text-white mr-4
+              bg-blue-600 hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue 
+              focus:border-blue-700 active:bg-blue-700 transition duration-150 ease-in-out"
+            >
+              <svg
+                className="-ml-1 mr-2 h-5 w-5"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="3"
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                ></path>
+              </svg>
+              Trip
+            </button>
           </a>
         </Link>
         <a
