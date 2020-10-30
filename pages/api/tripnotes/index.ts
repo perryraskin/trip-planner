@@ -8,17 +8,18 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
   let filters = {}
   if (userId && tripId) {
     filters = {
-      userId, 
+      deleted: false,
+      userId,
       tripId
     }
-  }
-  else if (userId && !tripId) {
+  } else if (userId && !tripId) {
     filters = {
+      deleted: false,
       userId
     }
-  }
-  else if (!userId && tripId) {
+  } else if (!userId && tripId) {
     filters = {
+      deleted: false,
       tripId
     }
   }

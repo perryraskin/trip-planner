@@ -7,23 +7,21 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
     query: { id }
   } = req
 
-  const tripId = id as unknown
-  const tripIdInt = tripId as string
+  const tripNoteItemId = id as unknown
+  const tripNoteItemIdInt = tripNoteItemId as string
   try {
-    const { trip } = req.body
-    console.log(req.body)
-    // const deletedTrip = await prisma.trip.delete({
-    //   where: { id: parseInt(tripIdInt) }
+    // const deletedTripNoteItem = await prisma.tripNote.delete({
+    //   where: { id: parseInt(tripNoteItemIdInt) }
     // })
-    const deletedTrip = await prisma.trip.update({
-      where: { id: parseInt(tripIdInt) },
+    const deletedTripNoteItem = await prisma.tripNoteItem.update({
+      where: { id: parseInt(tripNoteItemIdInt) },
       data: {
         deleted: true
       }
     })
 
     res.status(201)
-    res.json({ message: "Trip deleted", deletedTrip })
+    res.json({ message: "Trip Note item deleted", deletedTripNoteItem })
   } catch (err) {
     res.status(500)
     res.json({ error: err.message })

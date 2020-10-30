@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react"
-import { NextPage, GetServerSideProps } from "next"
+import { NextPage, GetServerSideProps, InferGetServerSidePropsType } from "next"
 import absoluteUrl from "next-absolute-url"
 
 import TripDetail from "../../components/Trip/TripDetail"
@@ -11,7 +11,7 @@ interface Props {
   errors?: any
 }
 
-const TripDetailPage: NextPage<Props> = ({ trip, errors }) => {
+const TripDetailPage: NextPage<Props> = ({ trip, errors }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return <TripDetail trip={trip} />
 }
 

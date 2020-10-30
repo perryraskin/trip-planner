@@ -32,7 +32,7 @@ const Home: NextPage<Props> = ({}) => {
   const [mutateDeleteTrip] = useMutation(
     (tripId: number) =>
       fetch(`/api/trip/${tripId}/delete`, {
-        method: "DELETE",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json"
         }

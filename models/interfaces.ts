@@ -6,6 +6,7 @@ export interface Trip {
   headerImageUrl: string
   userId: number
   TripNotes: Array<TripNote>
+  deleted: boolean
 }
 
 export interface TripNote {
@@ -19,6 +20,7 @@ export interface TripNote {
   Trip: Trip
   TripNoteCosts: Array<TripNoteCost>
   TripNoteItems: Array<TripNoteItem>
+  deleted: boolean
 }
 
 export interface TripNoteCost {
@@ -41,6 +43,7 @@ export interface TripNoteItem {
   body: string
   tripNoteId: number
   TripNoteItemImages: Array<TripNoteItemImage>
+  deleted: boolean
 }
 
 export enum TripNoteItemType {
@@ -55,4 +58,5 @@ export interface TripNoteItemImage {
   sourceUrl: string
   tag: string
   tripNoteItemId: number
+  deleted: boolean
 }

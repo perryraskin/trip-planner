@@ -27,7 +27,7 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
     const choseToDelete = window.confirm("Delete Trip Note?")
     if (choseToDelete) {
       const res = await fetch(`/api/tripnote/${tripNoteId}/delete`, {
-        method: "DELETE",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json"
         }
@@ -39,6 +39,13 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
       }
     }
   }
+
+  if (trip.deleted)
+    return (
+      <Section extend="text-center">
+        <p>Trip not found!</p>
+      </Section>
+    )
   return (
     <Section extend="mb-20 w-full py-12 px-4">
       <div className="uppercase text-xxs font-semibold">

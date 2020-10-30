@@ -59,11 +59,11 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
     })
   })
 
-  async function confirmDelete(tripNoteId: number) {
-    const choseToDelete = window.confirm("Delete Trip Note?")
+  async function confirmDelete(tripNoteItemId: number) {
+    const choseToDelete = window.confirm("Delete Trip Note item?")
     if (choseToDelete) {
-      const res = await fetch(`/api/tripnote/${tripNoteId}/delete`, {
-        method: "DELETE",
+      const res = await fetch(`/api/tripNoteItem/${tripNoteItemId}/delete`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json"
         }
@@ -71,8 +71,9 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
       const data = await res.json()
       if (!data.error) {
         console.log(data)
-        document.getElementById(tripNoteId.toString()).remove()
-      }
+        document.getElementById(tripNoteItemId.toString()).remove()
+        setActiveItem(0)
+      } else console.log(data.error)
     }
   }
 
@@ -140,7 +141,12 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
         <p>Oh no! An error has occured :(</p>
       </Section>
     )
-  }
+  } else if (tripNote.Trip.deleted || tripNote.deleted)
+    return (
+      <Section extend="text-center">
+        <p>Trip Note not found!</p>
+      </Section>
+    )
   return (
     <Section extend="mb-20 w-full py-12 px-4">
       <div className="uppercase text-xxs font-semibold">
@@ -207,12 +213,16 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
       </div>
       <div className="mt-5 md:mt-0 md:col-span-2">
         <div className="shadow sm:rounded-md sm:overflow-hidden bg-white">
-          <ul className="flex">
+          <ul className="whitespace-no-wrap flex flex-row overflow-x-auto">
             {tripNoteItems.length > 0 ? (
               tripNoteItems.map((item: TripNoteItem, index) => {
                 const isActiveItem = index === activeItem
                 return (
-                  <li key={item.id} className="flex-1 mr-2">
+                  <li
+                    key={item.id}
+                    id={item.id.toString()}
+                    className="flex-1 mr-2"
+                  >
                     <a
                       className={`text-center leading-9 block uppercase text-xs font-semibold
                         tracking-wide py-2 px-4 cursor-pointer hover:border-blue-600 hover:text-blue-600
@@ -272,19 +282,33 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
 
           {/* ITEM TAB SECTION */}
           <div className={`${isAddingItem ? "hidden" : ""}`}>
-            <h3
-              className={`ml-6 text-base leading-9 
+            <div className="text-center md:text-left">
+              <p
+                className={`ml-6 text-base leading-9 
             ${
               tripNoteItems[activeItem] &&
               tripNoteItems[activeItem].subtitle.length > 0
                 ? ""
                 : "hidden"
             }`}
-            >
-              {tripNoteItems[activeItem]
-                ? tripNoteItems[activeItem].subtitle
-                : ""}
-            </h3>
+              >
+                {tripNoteItems[activeItem]
+                  ? tripNoteItems[activeItem].subtitle
+                  : ""}
+              </p>
+              <div
+                className="mt-0 ml-6 text-xxs uppercase 
+                              tracking-widest font-semibold cursor-pointer"
+              >
+                <a
+                  href="#"
+                  data-test={tripNoteItems[activeItem].id}
+                  onClick={() => confirmDelete(tripNoteItems[activeItem].id)}
+                >
+                  Delete this item
+                </a>
+              </div>
+            </div>
             <div
               className={`m-6 ${
                 tripNoteItems.length == 0 ||
@@ -362,12 +386,21 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
                                   </p>
                                 </div>
                               </div>
-                              <p
-                                className="mt-1 text-center text-xxs uppercase 
-                              tracking-widest font-semibold text-gray-600"
-                              >
-                                {image.name}
-                              </p>
+                              <div className="flex items-center justify-between">
+                                <div
+                                  className="mt-1 text-xxs uppercase 
+                              tracking-widest font-semibold"
+                                >
+                                  {image.name.substring(0, 17)}
+                                  {image.name.length > 17 ? "..." : ""}
+                                </div>
+                                {/* <div
+                                  className="text-right mt-1 text-xxs uppercase 
+                              tracking-widest font-semibold cursor-pointer"
+                                >
+                                  <a>Delete</a>
+                                </div> */}
+                              </div>
                             </div>
                           )
                         }

@@ -19,7 +19,20 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         TripNoteCosts: true,
         TripNoteItems: {
           include: {
-            TripNoteItemImages: true
+            TripNoteItemImages: {
+              where: {
+                deleted: false
+              },
+              orderBy: {
+                id: "asc"
+              }
+            }
+          },
+          where: {
+            deleted: false
+          },
+          orderBy: {
+            id: "asc"
           }
         }
       }

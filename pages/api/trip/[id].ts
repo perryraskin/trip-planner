@@ -23,6 +23,9 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
                 TripNoteItemImages: true
               }
             }
+          },
+          orderBy: {
+            title: "asc"
           }
         }
       }
