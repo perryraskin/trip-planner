@@ -22,13 +22,17 @@ import {
 interface Props {
   tripNote: TripNote
   setTripNoteItems: (tripNoteItems: Array<TripNoteItem>) => void
+  activeItem: number
   setActiveItem: (activeItem: number) => void
+  setIsAddingItem: (isAddingItem: boolean) => void
 }
 
 const TripNoteItemForm: NextPage<Props> = ({
   tripNote,
   setTripNoteItems,
-  setActiveItem
+  activeItem,
+  setActiveItem,
+  setIsAddingItem
 }) => {
   const router = useRouter()
   const now = dayjs()
@@ -58,7 +62,10 @@ const TripNoteItemForm: NextPage<Props> = ({
     const resData = await res.json()
     const tripNoteResponse: TripNote = resData.tripNote
     setTripNoteItems(tripNoteResponse.TripNoteItems)
-    setActiveItem(0)
+    setTitle("")
+    setSubtitle("")
+    setActiveItem(activeItem)
+    setIsAddingItem(false)
   }
 
   async function sendTripNoteItemData(e, tripNoteItemData) {

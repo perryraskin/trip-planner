@@ -220,7 +220,9 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
               <TripNoteItemForm
                 tripNote={tripNote}
                 setTripNoteItems={setTripNoteItems}
+                activeItem={0}
                 setActiveItem={setActiveItem}
+                setIsAddingItem={setIsAddingItem}
               />
             )}
             {tripNoteItems.length > 0 && tripNoteItems.length < 4 ? (
@@ -246,7 +248,9 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
             <TripNoteItemForm
               tripNote={tripNote}
               setTripNoteItems={setTripNoteItems}
+              activeItem={tripNote.TripNoteItems.length}
               setActiveItem={setActiveItem}
+              setIsAddingItem={setIsAddingItem}
             />
           </div>
 
@@ -295,7 +299,7 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
                   : "hidden"
               }`}
             >
-              <div className="container px-5 py-24 mx-auto">
+              <div className="container px-5 py-4 mx-auto">
                 <div className="flex flex-wrap -m-4">
                   {tripNoteItems[activeItem] &&
                   tripNoteItems[activeItem].TripNoteItemImages
@@ -306,10 +310,10 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
                               key={image.id}
                               className="lg:w-1/3 sm:w-1/2 p-4"
                             >
-                              <div className="flex relative">
+                              <div className="flex relative h-48">
                                 <img
                                   alt={image.name}
-                                  className="absolute inset-0 w-full h-full object-cover object-center"
+                                  className="rounded absolute inset-0 w-full h-full object-cover object-center"
                                   src={image.sourceUrl}
                                 />
                                 <div className="px-8 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0">
