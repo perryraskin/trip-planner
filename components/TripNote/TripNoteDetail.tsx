@@ -14,6 +14,7 @@ import {
   CloudinaryContext
 } from "cloudinary-react"
 import Dropzone from "react-dropzone"
+import Lightbox from "react-awesome-lightbox"
 
 import withLayout from "../../hocs/withLayout"
 import utilities from "../../utilities"
@@ -47,6 +48,16 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
   const [activeItem, setActiveItem] = React.useState(0)
   const [isAddingItem, setIsAddingItem] = React.useState(false)
   const [isUploadingFiles, setIsUploadingFiles] = React.useState(false)
+  const [isViewingImages, setIsViewingImages] = React.useState(false)
+  const [currentImageIndex, setCurrentImageIndex] = React.useState(0)
+
+  let images = []
+  tripNoteItems[activeItem].TripNoteItemImages.forEach(image => {
+    images.push({
+      url: image.sourceUrl,
+      title: image.name
+    })
+  })
 
   async function confirmDelete(tripNoteId: number) {
     const choseToDelete = window.confirm("Delete Trip Note?")
@@ -116,6 +127,11 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
         fetchTripNoteRequest()
       }, 5000)
     }
+  }
+
+  function handleClickImage(index: number) {
+    setCurrentImageIndex(index)
+    setIsViewingImages(true)
   }
 
   if (!tripNote) {
@@ -290,6 +306,17 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
                 // value={tripNoteItems[activeItem].body}
               ></textarea>
             </div>
+
+            {/* IMAGE VIEWER */}
+            {isViewingImages ? (
+              <Lightbox
+                images={images}
+                onClose={() => setIsViewingImages(false)}
+                startIndex={currentImageIndex}
+              />
+            ) : null}
+
+            {/* IMAGE GALLERY */}
             <section
               className={`m-6 ${
                 tripNoteItems.length > 0 &&
@@ -304,7 +331,7 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
                   {tripNoteItems[activeItem] &&
                   tripNoteItems[activeItem].TripNoteItemImages
                     ? tripNoteItems[activeItem].TripNoteItemImages.map(
-                        (image: TripNoteItemImage) => {
+                        (image: TripNoteItemImage, index) => {
                           return (
                             <div
                               key={image.id}
@@ -313,10 +340,15 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
                               <div className="flex relative h-48">
                                 <img
                                   alt={image.name}
-                                  className="rounded absolute inset-0 w-full h-full object-cover object-center"
+                                  className="rounded absolute inset-0 w-full h-full 
+                                    object-cover object-center"
                                   src={image.sourceUrl}
                                 />
-                                <div className="px-8 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0">
+                                <div
+                                  onClick={() => handleClickImage(index)}
+                                  className="px-8 relative z-10 w-full border-4 border-gray-200 
+                                  bg-white opacity-0 cursor-pointer"
+                                >
                                   <h2 className="tracking-widest text-sm title-font font-medium text-indigo-500 mb-1">
                                     .
                                   </h2>
@@ -330,6 +362,12 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
                                   </p>
                                 </div>
                               </div>
+                              <p
+                                className="mt-1 text-center text-xxs uppercase 
+                              tracking-widest font-semibold text-gray-600"
+                              >
+                                {image.name}
+                              </p>
                             </div>
                           )
                         }
@@ -338,6 +376,8 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
                 </div>
               </div>
             </section>
+
+            {/* DRAG/DROP FILE UPLOADER */}
             <div
               className={`px-4 py-5 sm:p-6 
             ${tripNoteItems.length > 0 ? "" : "hidden"}`}
