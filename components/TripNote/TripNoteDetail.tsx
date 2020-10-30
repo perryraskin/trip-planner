@@ -52,12 +52,14 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0)
 
   let images = []
-  tripNoteItems[activeItem].TripNoteItemImages.forEach(image => {
-    images.push({
-      url: image.sourceUrl,
-      title: image.name
+  if (tripNoteItems[activeItem]) {
+    tripNoteItems[activeItem].TripNoteItemImages.forEach(image => {
+      images.push({
+        url: image.sourceUrl,
+        title: image.name
+      })
     })
-  })
+  }
 
   async function confirmDelete(tripNoteItemId: number) {
     const choseToDelete = window.confirm("Delete Trip Note item?")
@@ -159,99 +161,89 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
         </Link>{" "}
         / {tripNote.title}
       </div>
-      <div className="lg:flex lg:items-center lg:justify-between">
-        <div className="flex-1 min-w-0">
-          <div>
-            <h2 className="mt-6 text-3xl leading-9 font-extrabold">
-              {tripNote.title}
-              <span
-                className="sm:ml-6 ml-2 px-4 py-1 inline-flex text-sm leading-5 
+
+      <div className="mt-8 lg:flex lg:items-center lg:justify-between mb-4">
+        <h2 className="mt-6 text-3xl leading-9 font-extrabold">
+          {tripNote.title}
+          <span
+            className="sm:ml-6 ml-2 px-4 py-1 inline-flex text-sm leading-5 
                                 font-semibold rounded-full bg-indigo-600 text-white"
-              >
-                {tripNote.tripNoteType === TripNoteType.Lodging
-                  ? "Lodging"
-                  : ""}
-              </span>
-            </h2>
-          </div>
-          <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap">
-            <div className="mt-2 flex items-center text-sm leading-5 text-gray-500">
-              <span className="mb-6">
-                {tripNote.subtitle} [{tripNote.tag}]
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="mt-5 flex lg:mt-0 lg:ml-4">
-          <span className="shadow-sm rounded-md">
-            <Link
-              href="/trip/[tripid]/tripnote/[tripnoteid]/edit"
-              as={`/trip/${tripNote.tripId}/tripnote/${tripNote.id}/edit`}
-            >
-              <a
-                type="button"
-                className="inline-flex items-center px-4 py-2 border border-gray-300 
+          >
+            {tripNote.tripNoteType === TripNoteType.Lodging ? "Lodging" : ""}
+            {/* TODO: ADD THE OTHER TYPES */}
+          </span>
+        </h2>
+        <span className="shadow-sm rounded-md">
+          <Link
+            href="/trip/[tripid]/tripnote/[tripnoteid]/edit"
+            as={`/trip/${tripNote.tripId}/tripnote/${tripNote.id}/edit`}
+          >
+            <a
+              type="button"
+              className="inline-flex items-center px-4 py-2 border border-gray-300 
               text-sm leading-5 font-medium rounded-md text-gray-700 bg-white 
               hover:text-gray-500 focus:outline-none focus:shadow-outline-blue 
               focus:border-blue-300 active:text-gray-800 active:bg-gray-50 
               transition duration-150 ease-in-out"
+            >
+              {/* Heroicon name: pencil */}
+              <svg
+                className="-ml-1 mr-2 h-5 w-5 text-gray-500"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
               >
-                {/* Heroicon name: pencil */}
-                <svg
-                  className="-ml-1 mr-2 h-5 w-5 text-gray-500"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                </svg>
-                Edit
-              </a>
-            </Link>
-          </span>
-        </div>
+                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+              </svg>
+              Edit
+            </a>
+          </Link>
+        </span>
+      </div>
+      <div className="mt-2 flex items-center text-base leading-5">
+        <p>
+          ${tripNote.TripNoteCosts[0].amount} or{" "}
+          {tripNote.TripNoteCosts[1].amount} points
+        </p>
+      </div>
+      <div className="mt-2 flex items-center text-sm leading-5 text-gray-500">
+        <span className="mb-6">
+          {tripNote.subtitle} [{tripNote.tag}]
+        </span>
       </div>
       <div className="mt-5 md:mt-0 md:col-span-2">
         <div className="shadow sm:rounded-md sm:overflow-hidden bg-white">
           <ul className="whitespace-no-wrap flex flex-row overflow-x-auto">
-            {tripNoteItems.length > 0 ? (
-              tripNoteItems.map((item: TripNoteItem, index) => {
-                const isActiveItem = index === activeItem
-                return (
-                  <li
-                    key={item.id}
-                    id={item.id.toString()}
-                    className="flex-1 mr-2"
-                  >
-                    <a
-                      className={`text-center leading-9 block uppercase text-xs font-semibold
+            {tripNoteItems.length > 0
+              ? tripNoteItems.map((item: TripNoteItem, index) => {
+                  const isActiveItem = index === activeItem
+                  return (
+                    <li
+                      key={item.id}
+                      id={item.id.toString()}
+                      className="flex-1 mr-2"
+                    >
+                      <a
+                        className={`text-center leading-9 block uppercase text-xs font-semibold
                         tracking-wide py-2 px-4 cursor-pointer hover:border-blue-600 hover:text-blue-600
                         ${
                           isActiveItem && !isAddingItem
                             ? "text-blue-600  border-blue-600 border-b-2 "
                             : "text-gray-400  hover:border-gray-50 hover:bg-gray-50 border-gray-200 border-b"
                         }`}
-                      href="#"
-                      onClick={() => {
-                        setIsAddingItem(false)
-                        setActiveItem(index)
-                      }}
-                    >
-                      {item.title}
-                    </a>
-                  </li>
-                )
-              })
-            ) : (
-              <TripNoteItemForm
-                tripNote={tripNote}
-                setTripNoteItems={setTripNoteItems}
-                activeItem={0}
-                setActiveItem={setActiveItem}
-                setIsAddingItem={setIsAddingItem}
-              />
-            )}
-            {tripNoteItems.length > 0 && tripNoteItems.length < 4 ? (
+                        href="#"
+                        onClick={() => {
+                          setIsAddingItem(false)
+                          setActiveItem(index)
+                        }}
+                      >
+                        {item.title}
+                      </a>
+                    </li>
+                  )
+                })
+              : null}
+            {tripNoteItems.length < 4 ? (
               <li className="flex-1 mr-2">
                 <a
                   className={`text-center leading-9 block uppercase text-xs font-semibold
@@ -265,7 +257,7 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
                   href="#"
                   onClick={() => setIsAddingItem(true)}
                 >
-                  New item
+                  Add item
                 </a>
               </li>
             ) : null}
@@ -281,10 +273,14 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
           </div>
 
           {/* ITEM TAB SECTION */}
-          <div className={`${isAddingItem ? "hidden" : ""}`}>
+          <div
+            className={`${
+              isAddingItem || !tripNoteItems[activeItem] ? "hidden" : ""
+            }`}
+          >
             <div className="text-center md:text-left">
               <p
-                className={`ml-6 text-base leading-9 
+                className={`ml-6 text-base leading-9
             ${
               tripNoteItems[activeItem] &&
               tripNoteItems[activeItem].subtitle.length > 0
@@ -302,7 +298,6 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
               >
                 <a
                   href="#"
-                  data-test={tripNoteItems[activeItem].id}
                   onClick={() => confirmDelete(tripNoteItems[activeItem].id)}
                 >
                   Delete this item

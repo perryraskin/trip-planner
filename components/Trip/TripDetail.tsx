@@ -210,7 +210,8 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
                         </div> */}
                             </td>
                             <td className="text-sm px-6 py-4 whitespace-no-wrap">
-                              ${0}
+                              ${tripNote.TripNoteCosts[0].amount} /{" "}
+                              {tripNote.TripNoteCosts[1].amount} points
                             </td>
                             {/* <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
                         Admin

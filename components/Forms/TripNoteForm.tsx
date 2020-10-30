@@ -34,9 +34,12 @@ const TripNoteForm: NextPage<Props> = ({}) => {
   const currentTrip: Trip = trip
   const { data: tripNote } = useQuery("tripnote", fetchTripNoteRequest)
   const currentTripNote: TripNote = tripNote
+  const [isSubmittingData, setIsSubmittingData] = React.useState(false)
+
   const [title, setTitle] = React.useState(
     currentTripNote ? currentTripNote.title : ""
   )
+  //console.log(currentTripNote)
   const [subtitle, setSubtitle] = React.useState(
     currentTripNote ? currentTripNote.subtitle : ""
   )
@@ -46,8 +49,16 @@ const TripNoteForm: NextPage<Props> = ({}) => {
   const [type, setType] = React.useState(
     currentTripNote ? currentTripNote.tripNoteType : "1"
   )
-  const [price, setPrice] = React.useState("0")
-  const [currency, setCurrency] = React.useState("")
+  const [priceUSD, setPriceUSD] = React.useState(
+    currentTripNote && currentTripNote.TripNoteCosts[0]
+      ? currentTripNote.TripNoteCosts[0].amount
+      : "0"
+  )
+  const [pricePoints, setPricePoints] = React.useState(
+    currentTripNote && currentTripNote.TripNoteCosts[1]
+      ? currentTripNote.TripNoteCosts[1].amount
+      : "0"
+  )
 
   async function fetchTripNoteRequest() {
     if (!window.location.pathname.includes("new")) {
@@ -62,12 +73,16 @@ const TripNoteForm: NextPage<Props> = ({}) => {
       setSubtitle(tripNote.subtitle)
       setTag(tripNote.tag)
       setType(tripNote.tripNoteType)
+      setPriceUSD(tripNote.TripNoteCosts[0].amount)
+      setPricePoints(tripNote.TripNoteCosts[1].amount)
       return tripNote
     }
   }
 
   async function sendTripNoteData(e, tripNoteData) {
     e.preventDefault()
+    setIsSubmittingData(true)
+
     let apiUrl = "/api/tripNotes/create"
     let fetchMethod = "POST"
     if (tripNote) {
@@ -85,9 +100,13 @@ const TripNoteForm: NextPage<Props> = ({}) => {
       console.log(res)
       res.json().then(res => {
         const { tripNoteResponse } = res
-        router.push(
-          `/trip/${tripNoteResponse.tripId}/tripnote/${tripNoteResponse.id}`
-        )
+        if (tripNoteResponse) {
+          router.push(
+            `/trip/${tripNoteResponse.tripId}/tripnote/${tripNoteResponse.id}`
+          )
+        } else {
+          console.log(res.error)
+        }
       })
     }
   }
@@ -160,7 +179,7 @@ const TripNoteForm: NextPage<Props> = ({}) => {
                       </div>
                       <div className="col-span-6 sm:col-span-3">
                         <label className="block text-sm font-medium leading-5 text-gray-700">
-                          Subtitle
+                          Subtitle (optional)
                         </label>
                         <input
                           className="mt-1 form-input block w-full py-2 px-3 
@@ -212,41 +231,48 @@ const TripNoteForm: NextPage<Props> = ({}) => {
                           Location
                         </label>
                         <input className="mt-1 form-input block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5" />
-                      </div>
-                      <div className="col-span-6 sm:col-span-6 lg:col-span-2">
+                      </div> */}
+                      <div className="col-span-6">
                         <label className="block text-sm font-medium leading-5 text-gray-700">
                           Price
                         </label>
-                        <input
-                          className="mt-1 form-input block w-full py-2 px-3 
-                          border border-gray-300 rounded-md shadow-sm 
-                          focus:outline-none focus:shadow-outline-blue focus:border-blue-300 
-                          transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                          onChange={e => setPrice(e.target.value)}
-                          value={
-                            currentTripNote ? currentTripNote.tag : ""
-                          }
-                        />
+                        <div className="mt-1 flex rounded-md shadow-sm">
+                          <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                            $
+                          </span>
+                          <input
+                            type="number"
+                            className="form-input flex-1 block w-full rounded-none rounded-r-md 
+                            transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                            onChange={e => setPriceUSD(e.target.value)}
+                            value={priceUSD}
+                          />
+                        </div>
+                        <div className="mt-2 flex rounded-md shadow-sm">
+                          <input
+                            type="number"
+                            className="form-input flex-1 block w-full rounded-none rounded-l-md 
+                            transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                            onChange={e => setPricePoints(e.target.value)}
+                            value={pricePoints}
+                          />
+                          <span
+                            className="inline-flex items-center px-3 rounded-r-md 
+                          border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm"
+                          >
+                            points
+                          </span>
+                        </div>
                       </div>
-                      <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                        <label className="block text-sm font-medium leading-5 text-gray-700">
-                          Currency
-                        </label>
-                        <input
-                          className="mt-1 form-input block w-full py-2 px-3 
-                          border border-gray-300 rounded-md shadow-sm 
-                          focus:outline-none focus:shadow-outline-blue focus:border-blue-300 
-                          transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                        />
-                      </div> */}
                     </div>
                   </div>
                   <div className="px-4 py-3 bg-gray-50 text-center sm:px-6">
                     <button
-                      className="py-2 px-4 border border-transparent text-sm 
-                    leading-5 font-medium rounded-md text-white bg-blue-600 
-                    shadow-sm hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue 
-                    active:bg-blue-600 transition duration-150 ease-in-out w-full sm:w-1/4"
+                      className={`py-2 px-4 border border-transparent text-sm 
+                      leading-5 font-medium rounded-md text-white bg-blue-600 
+                      shadow-sm hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue 
+                      active:bg-blue-600 transition duration-150 ease-in-out w-full sm:w-1/4
+                      ${isSubmittingData ? "spinner" : ""}`}
                       onClick={e =>
                         sendTripNoteData(e, {
                           tripNote: {
@@ -254,7 +280,15 @@ const TripNoteForm: NextPage<Props> = ({}) => {
                             tripNoteType: type,
                             tag,
                             title,
-                            subtitle
+                            subtitle,
+                            priceUSDId: currentTripNote
+                              ? currentTripNote.TripNoteCosts[0].id
+                              : 0,
+                            priceUSD,
+                            pricePointsId: currentTripNote
+                              ? currentTripNote.TripNoteCosts[1].id
+                              : 0,
+                            pricePoints
                           }
                         })
                       }

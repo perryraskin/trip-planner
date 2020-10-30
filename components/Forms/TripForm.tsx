@@ -21,6 +21,8 @@ const TripForm: NextPage<Props> = ({}) => {
   const now = dayjs()
   const { data: trip } = useQuery("trip", fetchTripRequest)
   const currentTrip: Trip = trip
+  const [isSubmittingData, setIsSubmittingData] = React.useState(false)
+
   const [nickname, setNickname] = React.useState(
     currentTrip ? currentTrip.nickname : ""
   )
@@ -50,6 +52,8 @@ const TripForm: NextPage<Props> = ({}) => {
 
   async function sendTripData(e, tripData) {
     e.preventDefault()
+    setIsSubmittingData(true)
+
     let apiUrl = "/api/trips/create"
     let fetchMethod = "POST"
     if (trip) {
@@ -139,10 +143,11 @@ const TripForm: NextPage<Props> = ({}) => {
                   </div>
                   <div className="px-4 py-3 bg-gray-50 text-center sm:px-6">
                     <button
-                      className="py-2 px-4 border border-transparent text-sm 
-                    leading-5 font-medium rounded-md text-white bg-blue-600 
-                    shadow-sm hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue 
-                    active:bg-blue-600 transition duration-150 ease-in-out w-full sm:w-1/4"
+                      className={`py-2 px-4 border border-transparent text-sm 
+                      leading-5 font-medium rounded-md text-white bg-blue-600 
+                      shadow-sm hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue 
+                      active:bg-blue-600 transition duration-150 ease-in-out w-full sm:w-1/4
+                      ${isSubmittingData ? "spinner" : ""}`}
                       onClick={e =>
                         sendTripData(e, {
                           trip: {
