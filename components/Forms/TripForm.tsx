@@ -51,9 +51,13 @@ const TripForm: NextPage<Props> = ({}) => {
   async function sendTripData(e, tripData) {
     e.preventDefault()
     let apiUrl = "/api/trips/create"
-    if (trip) apiUrl = `/api/trip/${trip.id}/update`
+    let fetchMethod = "POST"
+    if (trip) {
+      apiUrl = `/api/trip/${trip.id}/update`
+      fetchMethod = "PUT"
+    }
     const res = await fetch(apiUrl, {
-      method: "POST",
+      method: fetchMethod,
       headers: {
         "Content-Type": "application/json"
       },

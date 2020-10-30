@@ -3,32 +3,26 @@ import { PrismaClient } from "@prisma/client"
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
   const prisma = new PrismaClient({ log: ["query"] })
-
+  console.log(req.body)
   try {
-    const { tripNote } = req.body
-    const { userId, tripId, tripNoteType, tag, title, subtitle } = tripNote
-    console.log(req.body)
-    const tripNoteResponse = await prisma.tripNote.create({
+    const { tripNoteItemImage } = req.body
+    const { tripNoteItemId, name, sourceUrl } = tripNoteItemImage
+
+    const tripNoteItemImageResponse = await prisma.tripNoteItemImage.create({
       data: {
-        User: {
+        TripNoteItem: {
           connect: {
-            id: 1
+            id: parseInt(tripNoteItemId)
           }
         },
-        Trip: {
-          connect: {
-            id: tripId
-          }
-        },
-        tripNoteType: parseInt(tripNoteType),
-        tag,
-        title,
-        subtitle
+        name,
+        tag: "",
+        sourceUrl
       }
     })
 
     res.status(201)
-    res.json({ tripNoteResponse })
+    res.json({ tripNoteItemImageResponse })
   } catch (err) {
     res.status(500)
     res.json({ error: err.message })

@@ -6,24 +6,24 @@ export default async function(req, res) {
   const prisma = new PrismaClient({ log: ["query"] })
 
   try {
-    const { trip } = req.body
-    const { nickname, dateStart, dateEnd } = trip
+    const { tripNoteItem } = req.body
+    const { tripNoteId, title, subtitle } = tripNoteItem
     console.log(req.body)
-    const tripResponse = await prisma.trip.create({
+    const tripNoteItemResponse = await prisma.tripNoteItem.create({
       data: {
-        User: {
+        TripNote: {
           connect: {
-            id: 1
+            id: tripNoteId
           }
         },
-        nickname,
-        dateStart: new Date(dateStart),
-        dateEnd: new Date(dateEnd)
+        title,
+        subtitle,
+        body: ""
       }
     })
 
     res.status(201)
-    res.json({ tripResponse })
+    res.json({ tripNoteItemResponse })
   } catch (err) {
     res.status(500)
     res.json({ error: err.message })

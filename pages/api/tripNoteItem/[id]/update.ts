@@ -2,33 +2,26 @@ import { NextApiRequest, NextApiResponse } from "next"
 import { PrismaClient } from "@prisma/client"
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
+  //res = res as NextApiResponse
+  //req = req as NextApiRequest
   const prisma = new PrismaClient({ log: ["query"] })
 
   try {
-    const { tripNote } = req.body
-    const { userId, tripId, tripNoteType, tag, title, subtitle } = tripNote
-    console.log(req.body)
-    const tripNoteResponse = await prisma.tripNote.create({
+    const { tripNoteItem } = req.body
+    const { tripNoteId, title, subtitle, body } = tripNoteItem
+
+    const tripNoteItemResponse = await prisma.tripNoteItem.create({
       data: {
-        User: {
+        TripNote: {
           connect: {
-            id: 1
+            id: tripNoteId
           }
         },
-        Trip: {
-          connect: {
-            id: tripId
-          }
-        },
-        tripNoteType: parseInt(tripNoteType),
-        tag,
         title,
-        subtitle
+        subtitle,
+        body
       }
     })
-
-    res.status(201)
-    res.json({ tripNoteResponse })
   } catch (err) {
     res.status(500)
     res.json({ error: err.message })

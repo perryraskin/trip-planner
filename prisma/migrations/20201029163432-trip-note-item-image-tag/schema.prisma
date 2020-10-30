@@ -3,7 +3,7 @@
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 generator client {
@@ -61,7 +61,7 @@ model TripNoteItem {
   tripNoteId         Int?
   title              String
   subtitle           String
-  body            String
+  details            String
   TripNote           TripNote?           @relation(fields: [tripNoteId], references: [id])
   TripNoteItemImages TripNoteItemImage[]
 }

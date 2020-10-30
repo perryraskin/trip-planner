@@ -41,6 +41,12 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
   }
   return (
     <Section extend="mb-20 w-full py-12 px-4">
+      <div className="uppercase text-xxs font-semibold">
+        <Link href="/">
+          <a>Trips</a>
+        </Link>{" "}
+        / {trip.nickname}
+      </div>
       <div className="lg:flex lg:items-center lg:justify-between">
         <div className="flex-1 min-w-0">
           <div>
@@ -184,7 +190,7 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
                               <div className="text-sm leading-5 text-gray-900">
                                 <span
                                   className="px-2 inline-flex text-xs leading-5 
-                                font-semibold rounded-full bg-indigo-100 text-indigo-800"
+                                font-semibold rounded-full bg-indigo-600 text-white"
                                 >
                                   {tripNote.tripNoteType ===
                                   TripNoteType.Lodging

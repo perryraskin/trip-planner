@@ -1,5 +1,3 @@
-import { TripNoteCost } from "@prisma/client"
-
 export interface Trip {
   id: number
   nickname: string
@@ -23,6 +21,13 @@ export interface TripNote {
   TripNoteItems: Array<TripNoteItem>
 }
 
+export interface TripNoteCost {
+  id: number
+  tripNoteId: number
+  amount: number
+  currency: string
+}
+
 export enum TripNoteType {
   Lodging = 1,
   Transit,
@@ -33,9 +38,9 @@ export interface TripNoteItem {
   id: number
   title: string
   subtitle: string
-  details: string
+  body: string
   tripNoteId: number
-  TripNoteImages: Array<TripNoteItemImage>
+  TripNoteItemImages: Array<TripNoteItemImage>
 }
 
 export enum TripNoteItemType {
@@ -48,5 +53,6 @@ export interface TripNoteItemImage {
   id: number
   name: string
   sourceUrl: string
+  tag: string
   tripNoteItemId: number
 }

@@ -47,9 +47,14 @@ const MenuBar: NextPage<Props> = ({}) => {
             <line x1="4" y1="18" x2="20" y2="18" />
           </svg> */}
         </div>
-        <div className="text-xl text-white font-bold tracking-tight ml-2">
+        <div>
           <Link href={`/`}>
-            <a>Tripnotize</a>
+            <a
+              className="text-xl text-white font-bold tracking-tight ml-2 
+            hover:text-white hover:border-gray-900"
+            >
+              Tripnotize
+            </a>
           </Link>
         </div>
       </div>
