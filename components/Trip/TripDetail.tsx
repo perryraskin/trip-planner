@@ -22,6 +22,9 @@ interface Props {
 
 const TripDetail: NextPage<Props> = ({ trip }) => {
   const { loading, currentUser } = useCurrentUser()
+  const isTripOwner = currentUser
+    ? currentUser.id === trip.User.featherId
+    : false
   const router = useRouter()
   const now = dayjs()
 
@@ -85,11 +88,7 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
           </div>
         </div>
         <div
-          className={`mt-5 flex lg:mt-0 lg:ml-4 ${
-            currentUser && currentUser.id === trip.User.featherId
-              ? ""
-              : "hidden"
-          }`}
+          className={`mt-5 flex lg:mt-0 lg:ml-4 ${isTripOwner ? "" : "hidden"}`}
         >
           <span className={`shadow-sm rounded-md`}>
             <Link href="/trip/[tripid]/edit" as={`/trip/${trip.id}/edit`}>
@@ -236,10 +235,7 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
                             <td
                               className={`px-6 py-4 whitespace-no-wrap text-right 
                               text-sm leading-5 font-medium ${
-                                currentUser &&
-                                currentUser.id === trip.User.featherId
-                                  ? ""
-                                  : "hidden"
+                                isTripOwner ? "" : "hidden"
                               }`}
                             >
                               <Link

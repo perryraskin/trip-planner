@@ -40,6 +40,9 @@ interface Props {
 
 const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
   const { loading, currentUser } = useCurrentUser()
+  const isTripNoteOwner = currentUser
+    ? currentUser.id === tripNote.User.featherId
+    : false
   const router = useRouter()
   const now = dayjs()
   const imageRef = React.createRef<HTMLInputElement>()
@@ -176,9 +179,7 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
         </h2>
         <span
           className={`mt-5 flex lg:mt-0 lg:ml-4 ${
-            currentUser && currentUser.id === tripNote.User.featherId
-              ? ""
-              : "hidden"
+            isTripNoteOwner ? "" : "hidden"
           }`}
         >
           <Link
@@ -254,7 +255,7 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
                   )
                 })
               : null}
-            {tripNoteItems.length < 4 ? (
+            {isTripNoteOwner && tripNoteItems.length < 4 ? (
               <li className="flex-1 mr-2">
                 <a
                   className={`text-center leading-9 block uppercase text-xs font-semibold
