@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { PrismaClient } from "@prisma/client"
-import auth from "../../../middleware/auth"
+import auth from "../../../../middleware/auth"
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
   const decodedToken = await auth(req, res)
@@ -10,7 +10,10 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
   try {
     const trips = await prisma.trip.findMany({
       where: {
-        deleted: false
+        deleted: false,
+        User: {
+          featherId: decodedToken.sub
+        }
       },
       orderBy: {
         dateStart: "asc"

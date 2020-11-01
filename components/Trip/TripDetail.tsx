@@ -6,6 +6,7 @@ import { useQuery, useMutation, queryCache } from "react-query"
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 dayjs.extend(utc)
+import { useCurrentUser } from "feather-client-react"
 
 import withLayout from "../../hocs/withLayout"
 import utilities from "../../utilities"
@@ -20,6 +21,7 @@ interface Props {
 }
 
 const TripDetail: NextPage<Props> = ({ trip }) => {
+  const { loading, currentUser } = useCurrentUser()
   const router = useRouter()
   const now = dayjs()
 
@@ -29,7 +31,8 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
       const res = await fetch(`/api/tripnote/${tripNoteId}/delete`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "x-auth-token": currentUser ? currentUser.tokens.idToken : null
         }
       })
       const data = await res.json()
@@ -81,8 +84,14 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
             </div>
           </div>
         </div>
-        <div className="mt-5 flex lg:mt-0 lg:ml-4">
-          <span className="shadow-sm rounded-md">
+        <div
+          className={`mt-5 flex lg:mt-0 lg:ml-4 ${
+            currentUser && currentUser.id === trip.User.featherId
+              ? ""
+              : "hidden"
+          }`}
+        >
+          <span className={`shadow-sm rounded-md`}>
             <Link href="/trip/[tripid]/edit" as={`/trip/${trip.id}/edit`}>
               <a
                 type="button"
@@ -157,7 +166,13 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
                     {/* <th className="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                       Role
                     </th> */}
-                    <th className="px-6 py-3 bg-gray-50"></th>
+                    <th
+                      className={`px-6 py-3 bg-gray-50 ${
+                        currentUser && currentUser.id === trip.User.featherId
+                          ? ""
+                          : "hidden"
+                      }`}
+                    ></th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -219,8 +234,13 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
                         Admin
                       </td> */}
                             <td
-                              className="px-6 py-4 whitespace-no-wrap text-right 
-                            text-sm leading-5 font-medium"
+                              className={`px-6 py-4 whitespace-no-wrap text-right 
+                              text-sm leading-5 font-medium ${
+                                currentUser &&
+                                currentUser.id === trip.User.featherId
+                                  ? ""
+                                  : "hidden"
+                              }`}
                             >
                               <Link
                                 href="/trip/[tripid]/tripnote/[tripnoteid]/edit"

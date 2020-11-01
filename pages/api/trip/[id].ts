@@ -22,12 +22,14 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
               include: {
                 TripNoteItemImages: true
               }
-            }
+            },
+            User: true
           },
           orderBy: {
             title: "asc"
           }
-        }
+        },
+        User: true
       }
     })
 

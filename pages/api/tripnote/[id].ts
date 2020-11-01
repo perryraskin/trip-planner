@@ -34,7 +34,8 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
           orderBy: {
             id: "asc"
           }
-        }
+        },
+        User: true
       }
     })
 

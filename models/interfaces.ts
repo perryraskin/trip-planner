@@ -1,3 +1,10 @@
+export interface User {
+  id: number
+  name: string
+  email: string
+  featherId: string
+}
+
 export interface Trip {
   id: number
   nickname: string
@@ -7,6 +14,7 @@ export interface Trip {
   userId: number
   TripNotes: Array<TripNote>
   deleted: boolean
+  User: User
 }
 
 export interface TripNote {
@@ -21,6 +29,7 @@ export interface TripNote {
   TripNoteCosts: Array<TripNoteCost>
   TripNoteItems: Array<TripNoteItem>
   deleted: boolean
+  User: User
 }
 
 export interface TripNoteCost {

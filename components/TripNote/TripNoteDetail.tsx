@@ -6,6 +6,7 @@ import { useQuery, useMutation, queryCache } from "react-query"
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 dayjs.extend(utc)
+import { useCurrentUser } from "feather-client-react"
 import S3 from "react-s3-uploader"
 import {
   Image,
@@ -31,7 +32,6 @@ import {
   TripNoteCost,
   TripNoteItemImage
 } from "../../models/interfaces"
-import tripnotes from "../../pages/api/tripNotes"
 import { toArray } from "lodash"
 
 interface Props {
@@ -39,6 +39,7 @@ interface Props {
 }
 
 const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
+  const { loading, currentUser } = useCurrentUser()
   const router = useRouter()
   const now = dayjs()
   const imageRef = React.createRef<HTMLInputElement>()
@@ -173,7 +174,13 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
             {/* TODO: ADD THE OTHER TYPES */}
           </span>
         </h2>
-        <span className="shadow-sm rounded-md">
+        <span
+          className={`mt-5 flex lg:mt-0 lg:ml-4 ${
+            currentUser && currentUser.id === tripNote.User.featherId
+              ? ""
+              : "hidden"
+          }`}
+        >
           <Link
             href="/trip/[tripid]/tripnote/[tripnoteid]/edit"
             as={`/trip/${tripNote.tripId}/tripnote/${tripNote.id}/edit`}

@@ -11,7 +11,10 @@ interface Props {
   errors?: any
 }
 
-const TripDetailPage: NextPage<Props> = ({ trip, errors }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const TripDetailPage: NextPage<Props> = ({
+      trip,
+      errors
+    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return <TripDetail trip={trip} />
 }
 
