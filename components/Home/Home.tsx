@@ -6,6 +6,7 @@ import { useQuery, useMutation, queryCache } from "react-query"
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 dayjs.extend(utc)
+import { useCurrentUser } from "feather-client-react"
 
 import withLayout from "../../hocs/withLayout"
 import utilities from "../../utilities"
@@ -13,6 +14,7 @@ import { Trip } from "../../models/interfaces"
 
 import Section from "../Layout/Section"
 import Button from "../Elements/Button"
+import PostRegister from "./PostRegister"
 
 interface Props {}
 
@@ -24,6 +26,16 @@ async function fetchTripsRequest() {
 }
 
 const Home: NextPage<Props> = ({}) => {
+  const { loading, currentUser } = useCurrentUser()
+  const [userObject, setUserObject] = React.useState(null)
+
+  async function fetchUser(featherId) {
+    const res = await fetch(`/api/user/${featherId}`)
+    const data = await res.json()
+    const { user } = data
+    setUserObject(user)
+  }
+
   const { data: trips, error, isFetching } = useQuery(
     "trips",
     fetchTripsRequest
@@ -49,6 +61,17 @@ const Home: NextPage<Props> = ({}) => {
     if (choseToDelete) {
       mutateDeleteTrip(tripId)
     }
+  }
+
+  if (!currentUser && !userObject) {
+    return (
+      <Section>
+        <p>Not logged in!</p>
+      </Section>
+    )
+  } else if (!userObject) {
+    fetchUser(currentUser.id)
+    return <PostRegister setUserObject={setUserObject} />
   }
   return (
     <Section>

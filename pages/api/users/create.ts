@@ -6,15 +6,17 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     const { user } = req.body
+    const { name, email, featherId } = user
     const newUser = await prisma.user.create({
       data: {
-        name: user.name,
-        email: user.email
+        name,
+        email,
+        featherId
       }
     })
 
     res.status(201)
-    res.json({ user })
+    res.json({ newUser })
   } catch (err) {
     res.status(500)
     res.json({ error: err.message })
