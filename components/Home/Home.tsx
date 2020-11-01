@@ -92,12 +92,14 @@ const Home: NextPage<Props> = ({}) => {
                             />
                           </div> */}
                                 <div className="ml-4">
-                                  <div className="text-sm leading-5 font-medium text-gray-900">
+                                  <div className="text-sm leading-5 font-medium">
                                     <Link
                                       href="/trip/[tripid]"
                                       as={`/trip/${trip.id}`}
                                     >
-                                      <a>{trip.nickname}</a>
+                                      <a className="text-gray-900">
+                                        {trip.nickname}
+                                      </a>
                                     </Link>
                                   </div>
                                   {/* <div className="text-sm leading-5 text-gray-500">

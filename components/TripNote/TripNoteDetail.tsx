@@ -162,7 +162,7 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
         / {tripNote.title}
       </div>
 
-      <div className="mt-8 lg:flex lg:items-center lg:justify-between mb-4">
+      <div className="lg:flex lg:items-center lg:justify-between mb-4">
         <h2 className="mt-6 text-3xl leading-9 font-extrabold">
           {tripNote.title}
           <span
@@ -200,9 +200,13 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
           </Link>
         </span>
       </div>
-      <div className="mt-2 flex items-center text-base leading-5">
+      <div
+        className="mt-2 flex items-center text-sm uppercase tracking-widest 
+      font-semibold leading-5"
+      >
         <p>
-          ${tripNote.TripNoteCosts[0].amount} or{" "}
+          ${tripNote.TripNoteCosts[0].amount}{" "}
+          <span className="font-normal lowercase">or</span>{" "}
           {tripNote.TripNoteCosts[1].amount} points
         </p>
       </div>
@@ -273,6 +277,8 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
           </div>
 
           {/* ITEM TAB SECTION */}
+
+          {/* SUBTITLE */}
           <div
             className={`${
               isAddingItem || !tripNoteItems[activeItem] ? "hidden" : ""
@@ -324,6 +330,45 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
                 // onChange={e => setSubtitle(e.target.value)}
                 // value={tripNoteItems[activeItem].body}
               ></textarea>
+            </div>
+
+            {/* FILE UPLOAD BUTTON */}
+            <div className="text-center mt-4 mb-6 z-50">
+              <label>
+                <span className="cursor-pointer">
+                  <a
+                    type="button"
+                    className="inline-flex items-center px-4 py-2 border border-gray-300 
+              text-sm leading-5 font-medium rounded-md text-gray-700 bg-white 
+              hover:text-gray-500 focus:outline-none focus:shadow-outline-blue 
+              focus:border-blue-300 active:text-gray-800 active:bg-gray-50 
+              transition duration-150 ease-in-out"
+                  >
+                    {/* Heroicon name: document-add */}
+                    <svg
+                      className="-ml-1 mr-2 h-5 w-5 text-gray-500"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V8z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Upload files
+                  </a>
+                </span>
+                <input
+                  className="hidden"
+                  name="image"
+                  type="file"
+                  multiple={true}
+                  ref={imageRef}
+                  onChange={() => handleAddImages(tripNoteItems[activeItem].id)}
+                />
+              </label>
             </div>
 
             {/* IMAGE VIEWER */}
@@ -407,7 +452,7 @@ const TripNoteDetail: NextPage<Props> = ({ tripNote }) => {
 
             {/* DRAG/DROP FILE UPLOADER */}
             <div
-              className={`px-4 py-5 sm:p-6 
+              className={`hidden px-4 py-5 sm:p-6 
             ${tripNoteItems.length > 0 ? "" : "hidden"}`}
             >
               <div className="">

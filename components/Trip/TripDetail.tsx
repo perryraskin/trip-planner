@@ -179,12 +179,14 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
                                   />
                                 </div>
                                 <div className="ml-4">
-                                  <div className="text-sm leading-5 font-medium text-gray-900">
+                                  <div className="text-sm leading-5 font-medium">
                                     <Link
                                       href="/trip/[tripid]/tripnote/[tripnoteid]"
                                       as={`/trip/${tripNote.tripId}/tripnote/${tripNote.id}`}
                                     >
-                                      <a>{tripNote.title}</a>
+                                      <a className="text-gray-900">
+                                        {tripNote.title}
+                                      </a>
                                     </Link>
                                   </div>
                                   <div className="text-sm leading-5 text-gray-500">
