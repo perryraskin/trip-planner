@@ -5,7 +5,14 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
   const prisma = new PrismaClient({ log: ["query"] })
 
   try {
-    const trips = await prisma.trips.findMany()
+    const trips = await prisma.trip.findMany({
+      where: {
+        deleted: false
+      },
+      orderBy: {
+        nickname: "asc"
+      }
+    })
 
     res.status(200)
     res.json({ trips })

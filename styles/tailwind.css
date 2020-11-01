@@ -154,12 +154,20 @@ h3 {
 
 li > a,
 p > a {
-  @apply no-select text-black;
+  @apply no-select;
 }
 
 li > a:hover,
 p > a:hover {
-  @apply text-black;
+  @apply border-b-2 border-blue-600;
+}
+
+div > a {
+  @apply no-select text-gray-500;
+}
+
+div > a:hover {
+  @apply text-black border-b-2 border-blue-600;
 }
 
 p > ul {
@@ -173,6 +181,10 @@ p > ol {
 ul,
 ol {
   @apply mb-8;
+}
+
+.text-xxs {
+  font-size: 0.65rem;
 }
 
 .max-h-32 {

@@ -11,18 +11,19 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
   const tripIdInt = tripId as string
   try {
     const { trip } = req.body
+    const { nickname, dateStart, dateEnd } = trip
     console.log(req.body)
-    const existingTrip = await prisma.trips.update({
+    const tripResponse = await prisma.trip.update({
       where: { id: parseInt(tripIdInt) },
       data: {
-        nickname: trip.nickname,
-        dateStart: new Date(trip.dateStart),
-        dateEnd: new Date(trip.dateEnd)
+        nickname,
+        dateStart: new Date(dateStart),
+        dateEnd: new Date(dateEnd)
       }
     })
 
     res.status(201)
-    res.json({ trip })
+    res.json({ tripResponse })
   } catch (err) {
     res.status(500)
     res.json({ error: err.message })

@@ -10,9 +10,24 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
   const tripId = id as unknown
   const tripIdInt = tripId as string
   try {
-    const trip = await prisma.trips.findOne({
+    const trip = await prisma.trip.findOne({
       where: {
         id: parseInt(tripIdInt)
+      },
+      include: {
+        TripNotes: {
+          include: {
+            TripNoteCosts: true,
+            TripNoteItems: {
+              include: {
+                TripNoteItemImages: true
+              }
+            }
+          },
+          orderBy: {
+            title: "asc"
+          }
+        }
       }
     })
 

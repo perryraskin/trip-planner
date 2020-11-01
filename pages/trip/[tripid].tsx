@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useContext } from "react"
-import { NextPage, GetServerSideProps } from "next"
+import { NextPage, GetServerSideProps, InferGetServerSidePropsType } from "next"
 import absoluteUrl from "next-absolute-url"
 
-import TripDetail from "../../components/TripDetail/TripDetail"
+import TripDetail from "../../components/Trip/TripDetail"
 
-import { Trip } from "../../components/Home/Home"
+import { Trip } from "../../models/interfaces"
 
 interface Props {
   trip?: Trip
   errors?: any
 }
 
-const TripDetailPage: NextPage<Props> = ({ trip, errors }) => {
+const TripDetailPage: NextPage<Props> = ({ trip, errors }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return <TripDetail trip={trip} />
 }
 
@@ -27,7 +27,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   const res = await fetch(apiUrl)
   const resData = await res.json()
   const { trip } = resData
-  //console.log('res:', res);
+  //console.log("res:", trip)
 
   if (trip) {
     return {

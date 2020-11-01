@@ -3,3 +3,12 @@
 20200830225714-create-users
 20201020015857-trips
 20201020021258-trips-fix
+20201022034959-trip-notes
+20201023024102-tripnotes-user-id
+20201023025007-trip-note-image-fix
+20201023154246-trip-note-item-image-rename
+20201025172523-trip-note-item-type
+20201025194812-remove-trip-note-item-type
+20201029163432-trip-note-item-image-tag
+20201029180309-trip-note-item-body
+20201030165813-add-deleted-flag

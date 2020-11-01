@@ -1,8 +1,12 @@
 import React from "react"
 import Head from "next/head"
 import App from "next/app"
+import { FeatherClient, FeatherProvider } from "feather-client-react"
+
+const feather = FeatherClient("pk_live_WJkRoJB9SE4N9TXzcA7GblNIYr0Eth")
 
 import "../styles/tailwind.css"
+import "react-awesome-lightbox/build/style.css"
 
 class MyApp extends App {
   render() {
@@ -53,7 +57,11 @@ class MyApp extends App {
           {/* <meta key="twitter:image" property="twitter:image" content="" /> */}
           <meta key="twitter:card" property="twitter:card" content="summary" />
         </Head>
-        <Component {...pageProps} />
+        <div className="bg-gray-100">
+          <FeatherProvider client={feather}>
+            <Component {...pageProps} />
+          </FeatherProvider>
+        </div>
       </>
     )
   }

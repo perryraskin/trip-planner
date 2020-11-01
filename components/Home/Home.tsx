@@ -9,16 +9,10 @@ dayjs.extend(utc)
 
 import withLayout from "../../hocs/withLayout"
 import utilities from "../../utilities"
+import { Trip } from "../../models/interfaces"
 
 import Section from "../Layout/Section"
 import Button from "../Elements/Button"
-
-export interface Trip {
-  id: number
-  nickname: string
-  dateStart: Date
-  dateEnd: Date
-}
 
 interface Props {}
 
@@ -38,7 +32,7 @@ const Home: NextPage<Props> = ({}) => {
   const [mutateDeleteTrip] = useMutation(
     (tripId: number) =>
       fetch(`/api/trip/${tripId}/delete`, {
-        method: "DELETE",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json"
         }
@@ -87,7 +81,7 @@ const Home: NextPage<Props> = ({}) => {
                   {trips
                     ? trips.map((trip: Trip) => {
                         return (
-                          <tr key={trip.id} className="hover:bg-blue-100">
+                          <tr key={trip.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4 whitespace-no-wrap">
                               <div className="flex items-center">
                                 {/* <div className="flex-shrink-0 h-10 w-10">
@@ -98,9 +92,14 @@ const Home: NextPage<Props> = ({}) => {
                             />
                           </div> */}
                                 <div className="ml-4">
-                                  <div className="text-sm leading-5 font-medium text-gray-900">
-                                    <Link href={`/trip/${trip.id}`}>
-                                      {trip.nickname}
+                                  <div className="text-sm leading-5 font-medium">
+                                    <Link
+                                      href="/trip/[tripid]"
+                                      as={`/trip/${trip.id}`}
+                                    >
+                                      <a className="text-gray-900">
+                                        {trip.nickname}
+                                      </a>
                                     </Link>
                                   </div>
                                   {/* <div className="text-sm leading-5 text-gray-500">
@@ -130,7 +129,10 @@ const Home: NextPage<Props> = ({}) => {
                               className="px-6 py-4 whitespace-no-wrap text-right 
                             text-sm leading-5 font-medium"
                             >
-                              <Link href={`/trip/${trip.id}/edit`}>
+                              <Link
+                                href="/trip/[tripid]/edit"
+                                as={`/trip/${trip.id}/edit`}
+                              >
                                 <a className="text-blue-600 hover:text-blue-900 mr-4">
                                   Edit
                                 </a>

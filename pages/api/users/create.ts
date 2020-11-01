@@ -6,7 +6,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     const { user } = req.body
-    const newUser = await prisma.users.create({
+    const newUser = await prisma.user.create({
       data: {
         name: user.name,
         email: user.email
