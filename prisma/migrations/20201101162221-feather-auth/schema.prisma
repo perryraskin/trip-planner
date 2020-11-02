@@ -3,7 +3,7 @@
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 generator client {
@@ -17,7 +17,7 @@ model User {
   email     String
   Trips     Trip[]
   TripNotes TripNote[]
-  featherId String? @unique
+  featherId String?
 }
 
 model Trip {

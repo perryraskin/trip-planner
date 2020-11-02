@@ -7,40 +7,36 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
     query: { id }
   } = req
 
-  const tripNoteId = id as unknown
-  const tripNoteIdInt = tripNoteId as string
+  const userId = id as unknown
+  const userIdString = userId as string
   try {
-    const tripNote = await prisma.tripNote.findOne({
+    const user = await prisma.user.findOne({
       where: {
-        id: parseInt(tripNoteIdInt)
+        featherId: userIdString
       },
       include: {
-        Trip: true,
-        TripNoteCosts: true,
-        TripNoteItems: {
+        Trips: {
           include: {
-            TripNoteItemImages: {
-              where: {
-                deleted: false
+            TripNotes: {
+              include: {
+                TripNoteCosts: true,
+                TripNoteItems: {
+                  include: {
+                    TripNoteItemImages: true
+                  }
+                }
               },
               orderBy: {
-                id: "asc"
+                title: "asc"
               }
             }
-          },
-          where: {
-            deleted: false
-          },
-          orderBy: {
-            id: "asc"
           }
-        },
-        User: true
+        }
       }
     })
 
     res.status(200)
-    res.json({ tripNote })
+    res.json({ user })
   } catch (err) {
     res.status(500)
     res.json({ error: err.message })

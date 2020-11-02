@@ -6,6 +6,7 @@ import { useQuery, useMutation, queryCache } from "react-query"
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 dayjs.extend(utc)
+import { useCurrentUser } from "feather-client-react"
 
 import withLayout from "../../hocs/withLayout"
 import utilities from "../../utilities"
@@ -13,33 +14,53 @@ import { Trip } from "../../models/interfaces"
 
 import Section from "../Layout/Section"
 import Button from "../Elements/Button"
+import PostRegister from "./PostRegister"
 
 interface Props {}
 
-async function fetchTripsRequest() {
-  const res = await fetch("/api/trips")
-  const data = await res.json()
-  const { trips } = data
-  return trips
-}
-
 const Home: NextPage<Props> = ({}) => {
-  const { data: trips, error, isFetching } = useQuery(
-    "trips",
-    fetchTripsRequest
-  )
+  const { loading, currentUser } = useCurrentUser()
+  const [userObject, setUserObject] = React.useState(null)
+  const [userTrips, setUserTrips] = React.useState(null)
+
+  async function fetchTripsRequest(featherId) {
+    const res = await fetch(`/api/user/${featherId}/trips`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": currentUser ? currentUser.tokens.idToken : null
+      }
+    })
+    const data = await res.json()
+    const { trips } = data
+    setUserTrips(trips)
+  }
+
+  async function fetchUser(featherId) {
+    const res = await fetch(`/api/user/${featherId}`)
+    const data = await res.json()
+    const { user } = data
+    setUserObject(user)
+    fetchTripsRequest(featherId)
+  }
+
+  // const { data: trips, error, isFetching } = useQuery(
+  //   "trips",
+  //   fetchTripsRequest
+  // )
 
   const [mutateDeleteTrip] = useMutation(
     (tripId: number) =>
       fetch(`/api/trip/${tripId}/delete`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "x-auth-token": currentUser ? currentUser.tokens.idToken : null
         }
       }),
     {
       onSuccess: () => {
-        queryCache.invalidateQueries("trips")
+        fetchTripsRequest(currentUser.id)
       }
     }
   )
@@ -49,6 +70,17 @@ const Home: NextPage<Props> = ({}) => {
     if (choseToDelete) {
       mutateDeleteTrip(tripId)
     }
+  }
+
+  if (!currentUser && !userObject) {
+    return (
+      <Section>
+        <p>Not logged in!</p>
+      </Section>
+    )
+  } else if (!userObject) {
+    fetchUser(currentUser.id)
+    return <PostRegister setUserObject={setUserObject} />
   }
   return (
     <Section>
@@ -78,8 +110,8 @@ const Home: NextPage<Props> = ({}) => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {trips
-                    ? trips.map((trip: Trip) => {
+                  {userTrips
+                    ? userTrips.map((trip: Trip) => {
                         return (
                           <tr key={trip.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4 whitespace-no-wrap">

@@ -5,6 +5,7 @@ import { useQuery, useMutation, queryCache } from "react-query"
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 dayjs.extend(utc)
+import { useCurrentUser } from "feather-client-react"
 
 import withLayout from "../../hocs/withLayout"
 import utilities from "../../utilities"
@@ -17,6 +18,7 @@ import { Trip } from "../../models/interfaces"
 interface Props {}
 
 const TripForm: NextPage<Props> = ({}) => {
+  const { loading, currentUser } = useCurrentUser()
   const router = useRouter()
   const now = dayjs()
   const { data: trip } = useQuery("trip", fetchTripRequest)
@@ -63,7 +65,8 @@ const TripForm: NextPage<Props> = ({}) => {
     const res = await fetch(apiUrl, {
       method: fetchMethod,
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "x-auth-token": currentUser ? currentUser.tokens.idToken : null
       },
       body: JSON.stringify(tripData)
     })
@@ -71,7 +74,7 @@ const TripForm: NextPage<Props> = ({}) => {
       console.log(res)
       res.json().then(res => {
         const { tripResponse } = res
-        router.push(`/trip/${tripResponse.id}`)
+        if (tripResponse) router.push(`/trip/${tripResponse.id}`)
       })
     }
   }
