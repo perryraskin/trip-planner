@@ -12,9 +12,9 @@ interface Props {
 }
 
 const TripDetailPage: NextPage<Props> = ({
-      trip,
-      errors
-    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  trip,
+  errors
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return <TripDetail trip={trip} />
 }
 
@@ -24,7 +24,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   // const { origin } = absoluteUrl(req)
   // const apiUrl = `${origin}/api/trip/${tripid}`
   // const apiUrl = `http://localhost:3000/api/trip/${tripid}`
-  const apiUrl = `http://tripnotize.herokuapp.com/api/trip/${tripid}`
+  const apiUrl = `${process.env.BASE_URL}/api/trip/${tripid}`
 
   // const cookies = parseCookies(ctx)
   // const { sessionId } = cookies
