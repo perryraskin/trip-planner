@@ -23,7 +23,13 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
       }
     })
 
-    if (currentTrip.User.featherId === decodedToken.sub) {
+    const user = await prisma.user.findOne({
+      where: {
+        id: currentTrip.userId
+      }
+    })
+
+    if (user.featherId === decodedToken.sub) {
       // const deletedTrip = await prisma.trip.delete({
       //   where: { id: parseInt(tripIdInt) }
       // })

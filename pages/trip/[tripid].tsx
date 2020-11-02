@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react"
 import { NextPage, GetServerSideProps, InferGetServerSidePropsType } from "next"
-import absoluteUrl from "next-absolute-url"
+//import absoluteUrl from "next-absolute-url"
 
 import TripDetail from "../../components/Trip/TripDetail"
 
@@ -21,8 +21,11 @@ const TripDetailPage: NextPage<Props> = ({
 export const getServerSideProps: GetServerSideProps = async ctx => {
   const { req, params } = ctx
   const { tripid } = params
-  const { origin } = absoluteUrl(req)
-  const apiUrl = `${origin}/api/trip/${tripid}`
+  // const { origin } = absoluteUrl(req)
+  // const apiUrl = `${origin}/api/trip/${tripid}`
+  // const apiUrl = `http://localhost:3000/api/trip/${tripid}`
+  const apiUrl = `http://tripnotize.herokuapp.com/api/trip/${tripid}`
+
   // const cookies = parseCookies(ctx)
   // const { sessionId } = cookies
   //console.log('cookies:', cookies);

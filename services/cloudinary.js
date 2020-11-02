@@ -1,7 +1,7 @@
 const cloudinary = require("cloudinary").v2
 const path = require("path")
 
-function uploadImage(req, res, next) {
+export default function uploadImage(req, res, next) {
   const { filename } = req.file
   const localImagePath = path.join(__dirname, "../uploads/", filename)
   const { recipeID } = res
@@ -19,8 +19,4 @@ function uploadImage(req, res, next) {
       return next()
     }
   )
-}
-
-module.exports = {
-  uploadImage
 }

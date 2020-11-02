@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react"
-import { NextPage, GetServerSideProps } from "next"
-import absoluteUrl from "next-absolute-url"
+import { NextPage, GetServerSideProps, InferGetServerSidePropsType } from "next"
+//import absoluteUrl from "next-absolute-url"
 
 import TripNoteDetail from "../../../../components/TripNote/TripNoteDetail"
 
@@ -11,15 +11,21 @@ interface Props {
   errors?: any
 }
 
-const TripNoteDetailPage: NextPage<Props> = ({ tripNote, errors }) => {
+const TripNoteDetailPage: NextPage<Props> = ({
+  tripNote,
+  errors
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return <TripNoteDetail tripNote={tripNote} />
 }
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   const { req, params } = ctx
   const { tripid, tripnoteid } = params
-  const { origin } = absoluteUrl(req)
-  const apiUrl = `${origin}/api/tripnote/${tripnoteid}`
+  // const { origin } = absoluteUrl(req)
+  // const apiUrl = `${origin}/api/tripnote/${tripnoteid}`
+  //const apiUrl = `http://localhost:3000/api/tripnote/${tripnoteid}`
+  const apiUrl = `http://tripnotize.herokuapp.com/api/tripnote/${tripnoteid}`
+
   // const cookies = parseCookies(ctx)
   // const { sessionId } = cookies
   //console.log('cookies:', cookies);
