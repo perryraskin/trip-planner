@@ -157,16 +157,15 @@ p > a {
   @apply no-select;
 }
 
-li > a:hover,
-p > a:hover {
+.breadcrumbs > a:hover {
   @apply border-b-2 border-blue-600;
 }
 
-div > a {
+.breadcrumbs > a {
   @apply no-select text-gray-500;
 }
 
-div > a:hover {
+.breadcrumbs > a:hover {
   @apply text-black border-b-2 border-blue-600;
 }
 

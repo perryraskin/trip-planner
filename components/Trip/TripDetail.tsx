@@ -54,7 +54,7 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
     )
   return (
     <Section extend="mb-20 w-full py-12 px-4">
-      <div className="uppercase text-xxs font-semibold">
+      <div className="uppercase text-xxs font-semibold breadcrumbs">
         <Link href="/">
           <a>Trips</a>
         </Link>{" "}
