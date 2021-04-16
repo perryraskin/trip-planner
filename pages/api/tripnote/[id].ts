@@ -10,7 +10,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
   const tripNoteId = id as unknown
   const tripNoteIdInt = tripNoteId as string
   try {
-    const tripNote = await prisma.tripNote.findOne({
+    const tripNote = await prisma.tripNote.findUnique({
       where: {
         id: parseInt(tripNoteIdInt)
       },

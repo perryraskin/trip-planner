@@ -15,7 +15,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
     const { trip } = req.body
     const { nickname, dateStart, dateEnd } = trip
     console.log(req.body)
-    const currentTrip = await prisma.trip.findOne({
+    const currentTrip = await prisma.trip.findUnique({
       where: {
         id: parseInt(tripIdInt)
       },
@@ -24,7 +24,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
       }
     })
 
-    const user = await prisma.user.findOne({
+    const user = await prisma.user.findUnique({
       where: {
         id: currentTrip.userId
       }

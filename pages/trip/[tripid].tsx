@@ -33,7 +33,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   const res = await fetch(apiUrl)
   const resData = await res.json()
   const { trip } = resData
-  //console.log("res:", trip)
+  // console.log("res:", trip)
 
   if (trip) {
     return {

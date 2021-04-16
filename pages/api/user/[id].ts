@@ -10,7 +10,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
   const userId = id as unknown
   const userIdString = userId as string
   try {
-    const user = await prisma.user.findOne({
+    const user = await prisma.user.findUnique({
       where: {
         featherId: userIdString
       },

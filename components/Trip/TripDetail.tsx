@@ -46,7 +46,7 @@ const TripDetail: NextPage<Props> = ({ trip }) => {
     }
   }
 
-  if (trip.deleted)
+  if (trip && trip.deleted)
     return (
       <Section extend="text-center">
         <p>Trip not found!</p>
